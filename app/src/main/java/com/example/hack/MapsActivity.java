@@ -21,6 +21,8 @@ import java.util.InvalidPropertiesFormatException;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLoadedCallback {
 
+    private static final int initialZoom = 10;
+    private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private GoogleMap mMap;
     private ArrayList<Marker> tabMarker;
 
@@ -54,21 +56,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        LatLng quebec = new LatLng(46.829853, -71.254028);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(quebec));
-        mMap.setMinZoomPreference(8);
-        for (int i = 1; i < ParserCSV.Instance.bornes.size(); i++) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, initialZoom));
+        for (int i = 1; i < ParserCSV.Instance.electricalTerminals.size(); i++) {
             try {
-                Double.parseDouble(ParserCSV.Instance.bornes.get(i).getLatitude());
+                Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude());
                 if (isMarkerClose(i))
                     tabMarker.add(mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(Double.parseDouble(ParserCSV.Instance.bornes.get(i).getLatitude()), Double.parseDouble(ParserCSV.Instance.bornes.get(i).getLongitude())))
-                            .title(ParserCSV.Instance.bornes.get(i).getNomBorne())));
+                            .position(new LatLng(Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLongitude())))
+                            .title(ParserCSV.Instance.electricalTerminals.get(i).getNameElectricalTerminal())));
             }
-            catch (NumberFormatException ex)
+            catch (NumberFormatException e)
             {
+                System.out.println(e.toString());
             }
-            }
+        }
     }
 
     @Override
@@ -84,7 +85,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean isMarkerClose(int index)
     {
         return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
-                new LatLng(Double.parseDouble(ParserCSV.Instance.bornes.get(index).getLatitude()), Double.parseDouble(ParserCSV.Instance.bornes.get(index).getLongitude()))) < 30000);
+                new LatLng(Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(index).getLatitude()), Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(index).getLongitude()))) < 30000);
 
     }
 }
