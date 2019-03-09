@@ -5,11 +5,13 @@ import androidx.fragment.app.FragmentActivity;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,12 +23,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AsyncParserElectricalTerminal.Listener, AsyncParserPointOfInterest.Listener {
 
     private static final int initialZoom = 8;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
@@ -37,24 +40,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private EditText searchText;
     private ArrayList<Marker> markersTerminal;
     private CheckBox checkTerminal;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+
+        progressBar = findViewById(R.id.progressBar);
+
         try
         {
             final InputStream FILE_ELECTRICAL_TERMINAL = this.getResources().openRawResource(R.raw.bornes);
-            ParserElectricalTerminal.Instance.Parse(FILE_ELECTRICAL_TERMINAL);
-            final InputStream FILE_POINT_OF_INTEREST_INFO = this.getResources().openRawResource(R.raw.attraitsinfo);
-            final InputStream FILE_POINT_OF_INTEREST_ADDRESS = this.getResources().openRawResource(R.raw.attraitsadresse);
-            ParserPointOfInterest.Instance.Parse(FILE_POINT_OF_INTEREST_INFO, FILE_POINT_OF_INTEREST_ADDRESS);
+            AsyncParserElectricalTerminal asyncParserElectricalTerminal = new AsyncParserElectricalTerminal(this);
+            asyncParserElectricalTerminal.execute(FILE_ELECTRICAL_TERMINAL);
+            final InputStream[] FILE_POINT_OF_INTEREST = new InputStream[]{this.getResources().openRawResource(R.raw.attraitsinfo),this.getResources().openRawResource(R.raw.attraitsadresse)};
+            AsyncParserPointOfInterest asyncParserPointOfInterest = new AsyncParserPointOfInterest(this);
+            asyncParserElectricalTerminal.execute(FILE_POINT_OF_INTEREST);
         }
         catch (Exception e)
         {
             System.out.println(e.toString());
         }
+        progressBar.setVisibility(View.GONE);
 
         markersTerminal = new ArrayList<>();
 
@@ -66,7 +75,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         checkTerminal = findViewById(R.id.checkBox);
         checkTerminal.setChecked(true);
-
 
         checkTerminal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -179,4 +187,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 new LatLng(markersTerminal.get(index).getPosition().latitude, markersTerminal.get(index).getPosition().longitude)) < 30000);
     }
 
+    @Override
+    public void onParseElectricalTerminalComplete()
+    {
+
+    }
+
+    @Override
+    public void onParsePointOfInterestComplete()
+    {
+
+    }
 }
