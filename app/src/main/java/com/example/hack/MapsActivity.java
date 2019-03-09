@@ -3,7 +3,10 @@ package com.example.hack;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -21,7 +24,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int initialZoom = 8;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private GoogleMap mMap;
-    private ArrayList<Marker> tabMarker;
+    private ArrayList<Marker> markersTerminal;
+    private CheckBox checkTerminal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +42,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             System.out.println(e.toString());
         }
 
-        tabMarker = new ArrayList<>();
+        markersTerminal = new ArrayList<>();
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
         }
+
+        checkTerminal = findViewById(R.id.checkBox);
+        checkTerminal.setChecked(true);
+
+
+        checkTerminal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
+            }
+        });
     }
 
 
@@ -59,7 +74,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLatitude()) > 40 &&
                         Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLongitude()) < -60 &&
                         Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLongitude()) > -80)
-                tabMarker.add(mMap.addMarker(new MarkerOptions()
+                markersTerminal.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLongitude())))
                         .title(ParserElectrical.Instance.electricalTerminals.get(i).getNameElectricalTerminal())));
             }
@@ -72,11 +87,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
             public void onCameraIdle() {
-                for (int i = 0; i < tabMarker.size(); i++) {
-                    if (isMarkerClose(i))
-                        tabMarker.get(i).setVisible(true);
-                    else
-                        tabMarker.get(i).setVisible(false);
+                if (checkTerminal.isChecked()) {
+                    for (int i = 0; i < markersTerminal.size(); i++) {
+                        if (isMarkerClose(i))
+                            markersTerminal.get(i).setVisible(true);
+                        else
+                            markersTerminal.get(i).setVisible(false);
+                    }
+                }
+                else {
+                    for (int i = 0; i < markersTerminal.size(); i++) {
+                            markersTerminal.get(i).setVisible(false);
+                    }
                 }
             }
         });
@@ -85,6 +107,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean isMarkerClose(int index)
     {
         return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
-                new LatLng(tabMarker.get(index).getPosition().latitude, tabMarker.get(index).getPosition().longitude)) < 30000);
+                new LatLng(markersTerminal.get(index).getPosition().latitude, markersTerminal.get(index).getPosition().longitude)) < 30000);
     }
 }
