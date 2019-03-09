@@ -4,8 +4,6 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.location.Address;
 import android.location.Geocoder;
-import android.net.sip.SipAudioCall;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -14,7 +12,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -76,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
-        //searchText = (EditText) findViewById(R.id.searchText);
+        searchText = (EditText) findViewById(R.id.searchText);
     }
 
     private void initSearch()
