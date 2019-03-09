@@ -72,8 +72,6 @@
             android:hint="Enter city name"
             android:singleLine="true"
             android:imeOptions="actionSearch"
-            />
-        
-    </RelativeLayout>
+            />-->
 
 </RelativeLayout>
