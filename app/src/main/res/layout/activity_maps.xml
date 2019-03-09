@@ -35,4 +35,39 @@
 
     </com.google.android.material.textfield.TextInputLayout>-->
 
+    <RelativeLayout
+        android:id="@+id/searchBar_"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:elevation="10dp"
+        android:background="@drawable/white_border">
+
+        <ImageView
+            android:id="@+id/magnifyIcon"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_magnify" />
+
+        <EditText
+            android:id="@+id/searchText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/magnifyIcon"
+            android:layout_marginStart="10dp"
+            android:layout_centerVertical="true"
+            android:textSize="15sp"
+            android:textColor="#000"
+            android:background="@null"
+            android:hint="Enter city name"
+            android:singleLine="true"
+            android:imeOptions="actionSearch"
+            />
+        
+    </RelativeLayout>
+
 </RelativeLayout>

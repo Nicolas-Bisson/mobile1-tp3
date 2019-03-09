@@ -3,6 +3,10 @@ package com.example.hack;
 import androidx.fragment.app.FragmentActivity;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,6 +23,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int initialZoom = 10;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private GoogleMap mMap;
+
+    //widgets
+    private EditText searchText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +48,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mapFragment.getMapAsync(this);
         }
 
+        searchText = (EditText) findViewById(R.id.searchText);
     }
 
+    private void initSearch()
+    {
+        searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event)
+            {
+               /* if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE)
+                {
+
+                }*/
+                return false;
+            }
+        });
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
