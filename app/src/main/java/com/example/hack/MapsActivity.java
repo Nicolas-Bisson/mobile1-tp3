@@ -10,11 +10,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.SphericalUtil;
 
 import java.io.InputStream;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    private static final int initialZoom = 10;
+    private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private GoogleMap mMap;
 
     @Override
@@ -22,20 +25,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        try
+        {
+            final InputStream FICHIER = this.getResources().openRawResource(R.raw.bornes);
+            ParserCSV.Instance.Parse(FICHIER);
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.toString());
+        }
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
-            mapFragment.getMapAsync(this);
-
-            try {
-                final InputStream FICHIER = this.getResources().openRawResource(R.raw.bornes);
-                ParserCSV.Instance.Parse(FICHIER);
-            } catch (Exception e) {
-                System.out.println(e.toString());
-            }
         }
+
     }
 
 
@@ -43,11 +48,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        LatLng quebec = new LatLng(46.829853, -71.254028);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(quebec));
-        mMap.setMinZoomPreference(8);
-        mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(46.829853, -71.254028))
-                .title("Hello world"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, initialZoom));
+        for (int i = 1; i < ParserCSV.Instance.electricalTerminals.size(); i++) {
+            try {
+                Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude());
+                if (SphericalUtil.computeDistanceBetween(new LatLng(mMap.getProjection().getVisibleRegion().nearLeft.latitude, mMap.getProjection().getVisibleRegion().nearLeft.longitude),
+                        new LatLng(Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLongitude()))) > 10)
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLongitude())))
+                        .title(ParserCSV.Instance.electricalTerminals.get(i).getNameElectricalTerminal()));
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println(e.toString());
+            }
+        }
     }
 }

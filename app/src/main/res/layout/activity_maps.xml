@@ -18,6 +18,11 @@
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!--<com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/common_google_play_services_enable_button"
+        android:layout_height="wrap_content"/>
 
     <fragment
         android:id="@+id/map"
@@ -26,5 +31,6 @@
         android:layout_height="400dp"
         android:layout_marginTop="?actionBarSize" />
 
+    </com.google.android.material.textfield.TextInputLayout>-->
 
 </RelativeLayout>
