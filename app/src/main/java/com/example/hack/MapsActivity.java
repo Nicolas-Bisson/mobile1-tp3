@@ -23,21 +23,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
 
 
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {
             mapFragment.getMapAsync(this);
-        mapFragment.getMapAsync(this);
+            mapFragment.getMapAsync(this);
 
-        try
-        {
-            final InputStream FICHIER = this.getResources().openRawResource(R.raw.bornes);
-            ParserCSV.Instance.Parse(FICHIER);
-        }
-        catch (Exception e)
-        {
-            System.out.println(e.toString());
+            try {
+                final InputStream FICHIER = this.getResources().openRawResource(R.raw.bornes);
+                ParserCSV.Instance.Parse(FICHIER);
+            } catch (Exception e) {
+                System.out.println(e.toString());
+            }
         }
     }
 
