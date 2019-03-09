@@ -31,7 +31,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         try
         {
             final InputStream FICHIER = this.getResources().openRawResource(R.raw.bornes);
-            ParserCSV.Instance.Parse(FICHIER);
+            ParserElectrical.Instance.Parse(FICHIER);
         }
         catch (Exception e)
         {
@@ -53,15 +53,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, initialZoom));
-        for (int i = 1; i < ParserCSV.Instance.electricalTerminals.size(); i++) {
+        for (int i = 1; i < ParserElectrical.Instance.electricalTerminals.size(); i++) {
             try {
-                if (Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude()) < 90 &&
-                        Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude()) > 40 &&
-                        Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLongitude()) < -60 &&
-                        Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLongitude()) > -80)
+                if (Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLatitude()) < 90 &&
+                        Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLatitude()) > 40 &&
+                        Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLongitude()) < -60 &&
+                        Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLongitude()) > -80)
                 tabMarker.add(mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLongitude())))
-                        .title(ParserCSV.Instance.electricalTerminals.get(i).getNameElectricalTerminal())));
+                        .position(new LatLng(Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLongitude())))
+                        .title(ParserElectrical.Instance.electricalTerminals.get(i).getNameElectricalTerminal())));
             }
             catch (NumberFormatException e)
             {
