@@ -20,6 +20,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        Parser.Instance.Parse();
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         if (mapFragment != null) {
@@ -35,8 +37,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng quebec = new LatLng(46.829853, -71.254028);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(quebec));
         mMap.setMinZoomPreference(8);
-        mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(46.829853, -71.254028))
-                .title("Hello world"));
+        int e = 0;
+        for (int i = 0; i < 1; i++) {
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(Double.parseDouble(Parser.Instance.bornes.get(i).getLatitude()), Double.parseDouble(Parser.Instance.bornes.get(i).getLongitude())))
+                    .title(Parser.Instance.bornes.get(i).getNomBorne()));
+        }
     }
 }

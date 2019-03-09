@@ -1,3 +1,5 @@
+package com.example.hack;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -6,9 +8,9 @@ public enum Parser
 {
     Instance;
 
-    public static final String nomFichier = "bornes.csv";
+    public static final String nomFichier = "R.raw.bornes.csv";
 
-    private ArrayList<Borne> bornes;
+    public ArrayList<Borne> bornes;
 
     public void Parse()
     {
