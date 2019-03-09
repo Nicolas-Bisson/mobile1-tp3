@@ -35,5 +35,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng quebec = new LatLng(46.829853, -71.254028);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(quebec));
         mMap.setMinZoomPreference(8);
+        mMap.addMarker(new MarkerOptions()
+                .position(new LatLng(46.829853, -71.254028))
+                .title("Hello world"));
     }
 }
