@@ -11,6 +11,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.InputStream;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -23,6 +25,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        try
+        {
+            final InputStream FICHIER = this.getResources().openRawResource(R.raw.bornes);
+            ParserCSV.Instance.Parse(FICHIER);
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.toString());
+        }
     }
 
 

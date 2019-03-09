@@ -1,26 +1,28 @@
+package com.example.hack;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public enum Parser
+public enum ParserCSV
 {
     Instance;
 
-    public static final String nomFichier = "bornes.csv";
-
     private ArrayList<Borne> bornes;
 
-    public void Parse()
+    public void Parse(InputStream inputStream)
     {
         bornes = new ArrayList<>();
-        chargerCSV(nomFichier);
+        chargerCSV(inputStream);
         System.out.println("");
     }
-    private boolean chargerCSV(String nomFichier)
+    private boolean chargerCSV(InputStream inputStream)
     {
         try
         {
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(nomFichier));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             String ligne = bufferedReader.readLine();
             ArrayList<String> subString = new ArrayList<>();
             int i = 0;
