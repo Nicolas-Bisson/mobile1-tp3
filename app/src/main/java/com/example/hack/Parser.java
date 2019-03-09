@@ -8,7 +8,7 @@ public enum Parser
 {
     Instance;
 
-    public static final String nomFichier = "R.raw.bornes.csv";
+    public static final String nomFichier = "bornes.csv";
 
     public ArrayList<Borne> bornes;
 

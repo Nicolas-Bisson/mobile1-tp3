@@ -38,7 +38,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLng(quebec));
         mMap.setMinZoomPreference(8);
         int e = 0;
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < Parser.Instance.bornes.size(); i++) {
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(Double.parseDouble(Parser.Instance.bornes.get(i).getLatitude()), Double.parseDouble(Parser.Instance.bornes.get(i).getLongitude())))
                     .title(Parser.Instance.bornes.get(i).getNomBorne()));
