@@ -13,10 +13,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 
 import java.io.InputStream;
-import java.util.InvalidPropertiesFormatException;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+    private static final int initialZoom = 10;
+    private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private GoogleMap mMap;
 
     @Override
@@ -47,21 +48,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        LatLng quebec = new LatLng(46.829853, -71.254028);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(quebec));
-        mMap.setMinZoomPreference(8);
-        for (int i = 1; i < ParserCSV.Instance.bornes.size(); i++) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, initialZoom));
+        for (int i = 1; i < ParserCSV.Instance.electricalTerminals.size(); i++) {
             try {
-                Double.parseDouble(ParserCSV.Instance.bornes.get(i).getLatitude());
+                Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude());
                 if (SphericalUtil.computeDistanceBetween(new LatLng(mMap.getProjection().getVisibleRegion().nearLeft.latitude, mMap.getProjection().getVisibleRegion().nearLeft.longitude),
-                        new LatLng(Double.parseDouble(ParserCSV.Instance.bornes.get(i).getLatitude()), Double.parseDouble(ParserCSV.Instance.bornes.get(i).getLongitude()))) > 10)
+                        new LatLng(Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLongitude()))) > 10)
                 mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(Double.parseDouble(ParserCSV.Instance.bornes.get(i).getLatitude()), Double.parseDouble(ParserCSV.Instance.bornes.get(i).getLongitude())))
-                        .title(ParserCSV.Instance.bornes.get(i).getNomBorne()));
+                        .position(new LatLng(Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLongitude())))
+                        .title(ParserCSV.Instance.electricalTerminals.get(i).getNameElectricalTerminal()));
             }
-            catch (NumberFormatException ex)
+            catch (NumberFormatException e)
             {
+                System.out.println(e.toString());
             }
-            }
+        }
     }
 }
