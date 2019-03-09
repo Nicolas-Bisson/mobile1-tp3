@@ -10,7 +10,7 @@ public enum ParserCSV
 {
     Instance;
 
-    private ArrayList<Borne> bornes;
+    public ArrayList<Borne> bornes;
 
     public void Parse(InputStream inputStream)
     {
