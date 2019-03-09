@@ -14,9 +14,15 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp" />
 
-    <Button
-        android:id="@+id/button1"
+    <!--<com.google.android.material.button.MaterialButton
         android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/common_google_play_services_enable_button"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
