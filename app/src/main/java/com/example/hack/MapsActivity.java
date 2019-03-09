@@ -4,15 +4,12 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.location.Address;
 import android.location.Geocoder;
-import android.net.sip.SipAudioCall;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -45,8 +42,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         try
         {
-            final InputStream FICHIER = this.getResources().openRawResource(R.raw.bornes);
-            ParserElectrical.Instance.Parse(FICHIER);
+            final InputStream FILE_ELECTRICAL_TERMINAL = this.getResources().openRawResource(R.raw.bornes);
+            ParserElectricalTerminal.Instance.Parse(FILE_ELECTRICAL_TERMINAL);
+            final InputStream FILE_POINT_OF_INTEREST_INFO = this.getResources().openRawResource(R.raw.attraitsinfo);
+            ParserElectricalTerminal.Instance.Parse(FILE_POINT_OF_INTEREST_INFO);
+            final InputStream FILE_POINT_OF_INTEREST_ADDRESS = this.getResources().openRawResource(R.raw.attraitsadresse);
+            ParserElectricalTerminal.Instance.Parse(FILE_POINT_OF_INTEREST_ADDRESS);
         }
         catch (Exception e)
         {
@@ -120,15 +121,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, initialZoom));
-        for (int i = 1; i < ParserElectrical.Instance.electricalTerminals.size(); i++) {
+        for (int i = 1; i < ParserElectricalTerminal.Instance.electricalTerminals.size(); i++) {
             try {
-                if (Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLatitude()) < 90 &&
-                        Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLatitude()) > 40 &&
-                        Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLongitude()) < -60 &&
-                        Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLongitude()) > -80)
+                if (Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()) < 90 &&
+                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()) > 40 &&
+                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude()) < -60 &&
+                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude()) > -80)
                 tabMarker.add(mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserElectrical.Instance.electricalTerminals.get(i).getLongitude())))
-                        .title(ParserElectrical.Instance.electricalTerminals.get(i).getNameElectricalTerminal())));
+                        .position(new LatLng(Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude())))
+                        .title(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getNameElectricalTerminal())));
             }
             catch (NumberFormatException e)
             {
