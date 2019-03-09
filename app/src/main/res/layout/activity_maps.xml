@@ -1,36 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/app_bar"
-            style="@style/Widget.Design.CollapsingToolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            app:title="@string/app_name"
-            android:background="@color/colorPrimaryDark">
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <!--<com.google.android.material.button.MaterialButton
-        android:layout_width="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/common_google_play_services_enable_button"
-        android:layout_height="wrap_content"/>
 
     <fragment
         android:id="@+id/map"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_marginTop="?actionBarSize" />
+        android:layout_height="match_parent"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp" />
 
-    </com.google.android.material.textfield.TextInputLayout>-->
+    <RelativeLayout
+        android:id="@+id/searchBar_"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:elevation="10dp"
+        android:background="@drawable/white_border">
 
+        <ImageView
+            android:id="@+id/magnifyIcon"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_magnify" />
+
+        <EditText
+            android:id="@+id/searchText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/magnifyIcon"
+            android:layout_marginStart="10dp"
+            android:layout_centerVertical="true"
+            android:textSize="15sp"
+            android:textColor="#000"
+            android:background="@null"
+            android:hint="Enter city name"
+            android:singleLine="true"
+            android:imeOptions="actionSearch"
+            />
+    </RelativeLayout>
 </RelativeLayout>
