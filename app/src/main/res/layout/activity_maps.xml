@@ -13,34 +13,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp" />
-
-    <!--<com.google.android.material.button.MaterialButton
-        android:layout_width="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/common_google_play_services_enable_button"
-        android:layout_height="wrap_content"/>
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp"
-        android:background="#359c5e"
-        android:padding="8dp"
-        android:textColor="#ffffff" />
-
-    <CheckBox
-        android:id="@+id/activity_Checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="392dp"
-        android:text="Activité" />
-
+    
     <RelativeLayout
         android:id="@+id/searchBar_"
         android:layout_width="match_parent"
