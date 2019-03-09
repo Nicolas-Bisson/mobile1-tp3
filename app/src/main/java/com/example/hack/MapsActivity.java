@@ -2,6 +2,8 @@ package com.example.hack;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.net.sip.SipAudioCall;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
@@ -23,6 +25,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int initialZoom = 10;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private GoogleMap mMap;
+    private TextWatcher textWatcher;
 
     //widgets
     private EditText searchText;
@@ -65,6 +68,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
     }
+    /**
+     * Manipulates the map once available.
+     * This callback is triggered when the map is ready to be used.
+     * This is where we can add markers or lines, add listeners or move the camera. In this case,
+     * we just add a marker near Sydney, Australia.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     */
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -86,4 +98,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
+
+    public interface CheckboxListener {
+        void onCheck();
+    }
+
 }
