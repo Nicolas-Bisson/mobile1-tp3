@@ -57,7 +57,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             asyncParserElectricalTerminal.execute(FILE_ELECTRICAL_TERMINAL);
             final InputStream[] FILE_POINT_OF_INTEREST = new InputStream[]{this.getResources().openRawResource(R.raw.attraitsinfo),this.getResources().openRawResource(R.raw.attraitsadresse)};
             AsyncParserPointOfInterest asyncParserPointOfInterest = new AsyncParserPointOfInterest(this);
-            asyncParserElectricalTerminal.execute(FILE_POINT_OF_INTEREST);
+            asyncParserPointOfInterest.execute(FILE_POINT_OF_INTEREST);
         }
         catch (Exception e)
         {
