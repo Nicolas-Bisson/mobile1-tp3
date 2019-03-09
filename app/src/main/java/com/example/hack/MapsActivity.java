@@ -61,7 +61,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mapFragment.getMapAsync(this);
         }
 
-        //searchText = (EditText) findViewById(R.id.searchText);
+        searchText = (EditText) findViewById(R.id.searchText);
     }
 
     private void initSearch()
