@@ -56,7 +56,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         LatLng quebec = new LatLng(46.829853, -71.254028);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(quebec));
-        mMap.setMinZoomPreference(5);
+        mMap.setMinZoomPreference(8);
         for (int i = 1; i < ParserCSV.Instance.bornes.size(); i++) {
             try {
                 Double.parseDouble(ParserCSV.Instance.bornes.get(i).getLatitude());
