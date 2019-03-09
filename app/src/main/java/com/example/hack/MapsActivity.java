@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
-    private static final int initialZoom = 10;
+    private static final int initialZoom = 8;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private GoogleMap mMap;
     private ArrayList<Marker> tabMarker;
@@ -55,7 +55,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, initialZoom));
         for (int i = 1; i < ParserCSV.Instance.electricalTerminals.size(); i++) {
             try {
-                Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude());
+                if (Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude()) < 90 &&
+                        Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude()) > 40 &&
+                        Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLongitude()) < -60 &&
+                        Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLongitude()) > -80)
                 tabMarker.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserCSV.Instance.electricalTerminals.get(i).getLongitude())))
                         .title(ParserCSV.Instance.electricalTerminals.get(i).getNameElectricalTerminal())));
