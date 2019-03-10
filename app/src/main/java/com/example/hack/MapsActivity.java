@@ -19,6 +19,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -33,7 +34,7 @@ import java.util.TreeMap;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AsyncParserElectricalTerminal.Listener, AsyncParserPointOfInterest.Listener {
 
-    private static final int initialZoom = 8;
+    private static final int initialZoom = 12;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private GoogleMap mMap;
     private TextWatcher textWatcher;
@@ -92,14 +93,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         searchText = (EditText) findViewById(R.id.searchText);
         checkTerminal = findViewById(R.id.checkBox);
         checkTerminal.setChecked(true);
-
-
-        checkTerminal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
-            }
-        });
     }
 
     private void initSearch()
@@ -159,6 +152,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, initialZoom));
 
+
         initSearch();
 
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
@@ -198,7 +192,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Double.parseDouble(entry.getValue().getLongitude()) > -80)
                     markersInterest.add(mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(entry.getValue().getLatitude()), Double.parseDouble(entry.getValue().getLongitude())))
-                            .title(entry.getValue().getNomAttrait())));
+                            .title(entry.getValue().getNomAttrait())
+                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))));
             }
             catch (NumberFormatException e)
             {
@@ -209,6 +204,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 System.out.println(e.toString());
             }
         }
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
     }
 
     private void setElectricalTerminalNodes()
@@ -221,7 +217,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude()) > -80)
                         markersTerminal.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude())))
-                        .title(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getNameElectricalTerminal())));
+                        .title(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getNameElectricalTerminal())
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_electrical_terminal))));
             }
             catch (NumberFormatException e)
             {
@@ -233,13 +230,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean isMarkerTerminalClose(int index)
     {
         return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
-                new LatLng(markersTerminal.get(index).getPosition().latitude, markersTerminal.get(index).getPosition().longitude)) < 30000);
+                new LatLng(markersTerminal.get(index).getPosition().latitude, markersTerminal.get(index).getPosition().longitude)) < 5000);
     }
 
     public boolean isMarkerInterestClose(int index)
     {
         return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
-                new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < 30000);
+                new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < 5000);
     }
 
     @Override
