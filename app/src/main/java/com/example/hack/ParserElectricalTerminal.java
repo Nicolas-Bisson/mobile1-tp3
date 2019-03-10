@@ -29,10 +29,11 @@ public enum ParserElectricalTerminal
             while (ligne != null)
             {
                 countForReplacements = 0;
-                boolean containQuotes = ligne.contains("\"");
+                boolean containQuotes = false;
                 subString = new ArrayList<>();
                 while(ligne.contains("\""))
                 {
+                    containQuotes = true;
                     int positionFirstQuote = ligne.indexOf('\"');
                     subString.add(ligne.substring(positionFirstQuote, ligne.indexOf('\"', positionFirstQuote + 1)+ 1));
                     ligne = ligne.replace(subString.get(countForReplacements), "=" + countForReplacements);

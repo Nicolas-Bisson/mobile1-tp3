@@ -202,12 +202,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (TreeMap.Entry<String, PointOfInterest> entry : ParserPointOfInterest.Instance.pointOfInterests.entrySet())
         {
             try {
-                if (Double.parseDouble(entry.getValue().getLatitude()) < 90 &&
-                        Double.parseDouble(entry.getValue().getLatitude()) > 40 &&
-                        Double.parseDouble(entry.getValue().getLongitude()) < -60 &&
-                        Double.parseDouble(entry.getValue().getLongitude()) > -80)
+                double latitude = Double.parseDouble(entry.getValue().getLatitude());
+                double longitude = Double.parseDouble(entry.getValue().getLongitude());
+                if (latitude < 90 && latitude > 40 && longitude < -60 && longitude > -80)
                     markersInterest.add(mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(Double.parseDouble(entry.getValue().getLatitude()), Double.parseDouble(entry.getValue().getLongitude())))
+                            .position(new LatLng(latitude, longitude))
                             .title(entry.getValue().getNomAttrait())
                             .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))));
             }
@@ -228,12 +227,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     {
         for (int i = 1; i < ParserElectricalTerminal.Instance.electricalTerminals.size(); i++) {
             try {
-                if (Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()) < 90 &&
-                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()) > 40 &&
-                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude()) < -60 &&
-                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude()) > -80)
+                double latitude = Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude());
+                double longitude = Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude());
+                if (latitude < 90 && latitude > 40 && longitude < -60 && longitude > -80)
                         markersTerminal.add(mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude())))
+                        .position(new LatLng(latitude, longitude))
                         .title(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getNameElectricalTerminal())
                         .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_electrical_terminal))));
             }
@@ -246,14 +244,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public boolean isMarkerTerminalClose(int index)
     {
-        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
-                new LatLng(markersTerminal.get(index).getPosition().latitude, markersTerminal.get(index).getPosition().longitude)) < 5000);
+        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target, markersTerminal.get(index).getPosition()) < 5000);
     }
 
     public boolean isMarkerInterestClose(int index)
     {
-        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
-                new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < 5000);
+        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target, markersInterest.get(index).getPosition()) < 5000);
     }
 
     @Override
