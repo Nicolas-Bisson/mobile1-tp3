@@ -29,11 +29,13 @@ public enum ParserElectricalTerminal
             while (ligne != null)
             {
                 countForReplacements = 0;
-                boolean containQuotes = ligne.contains("\"");
+                boolean containQuotes = false;
                 subString = new ArrayList<>();
                 while(ligne.contains("\""))
                 {
-                    subString.add(ligne.substring(ligne.indexOf('\"'), ligne.indexOf('\"', ligne.indexOf('\"') + 1)+ 1));
+                    containQuotes = true;
+                    int positionFirstQuote = ligne.indexOf('\"');
+                    subString.add(ligne.substring(positionFirstQuote, ligne.indexOf('\"', positionFirstQuote + 1)+ 1));
                     ligne = ligne.replace(subString.get(countForReplacements), "=" + countForReplacements);
                     countForReplacements++;
                 }
@@ -45,7 +47,7 @@ public enum ParserElectricalTerminal
                     countForReplacements++;
                 }
                 String[] info = ligne.split("/");
-                electricalTerminals.add(new ElectricalTerminal(info[0], info[1],info[2],info[3],info[4],info[5],info[6]));
+                electricalTerminals.add(new ElectricalTerminal(info[0],info[4],info[5]));
                 ligne = bufferedReader.readLine();
             }
 
