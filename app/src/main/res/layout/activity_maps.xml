@@ -34,12 +34,6 @@
         android:layout_marginBottom="9dp"
         android:text="Touristique" />
 
-    <com.google.android.material.button.MaterialButton
-        android:layout_width="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/common_google_play_services_enable_button"
-        android:layout_height="wrap_content"/>
-
     <RelativeLayout
         android:id="@+id/searchBar_"
         android:layout_width="match_parent"
