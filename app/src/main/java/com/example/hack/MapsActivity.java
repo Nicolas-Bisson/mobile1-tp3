@@ -1,5 +1,11 @@
 package com.example.hack;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.pm.ActivityInfo;
@@ -10,6 +16,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -38,6 +45,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private GoogleMap mMap;
     private TextWatcher textWatcher;
+    private LatLng screenCenter;
 
     //widgets
     private EditText searchText;
@@ -56,6 +64,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
+
+//        drawerLayout = findViewById(R.id.drawer_layout);
+//
+//        NavigationView navigationView = findViewById(R.id.navigation_view);
+//        navigationView.setNavigationItemSelectedListener(
+//                new NavigationView.OnNavigationItemSelectedListener() {
+//                    @Override
+//                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+//                        menuItem.setChecked(true);
+//
+//                        return true;
+//                    }
+//                }
+//        );
+//
+//        Toolbar toolbar = findViewById(R.id.app_bar);
+//        setSupportActionBar(toolbar);
+//        ActionBar actionbar = getSupportActionBar();
+//        actionbar.setDisplayHomeAsUpEnabled(true);
+//        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+
+
 
         try
         {
@@ -87,7 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         checkTerminal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(screenCenter, mMap.getCameraPosition().zoom));
             }
         });
 
@@ -97,10 +127,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         checkInterest.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(screenCenter, mMap.getCameraPosition().zoom));
             }
         });
 
+        searchText = (EditText) findViewById(R.id.searchText);
+        checkTerminal = findViewById(R.id.checkBox);
+        checkTerminal.setChecked(true);
         searchText = (EditText) findViewById(R.id.searchText);
     }
 
@@ -167,6 +200,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
             public void onCameraIdle() {
+                screenCenter = new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude);
                 if (checkTerminal.isChecked()) {
                     for (int i = 0; i < markersTerminal.size(); i++) {
                         if (isMarkerTerminalClose(i))
@@ -220,7 +254,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 System.out.println(e.toString());
             }
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(screenCenter, mMap.getCameraPosition().zoom));
         progressBar.setVisibility(View.GONE);
     }
 
@@ -246,14 +280,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public boolean isMarkerTerminalClose(int index)
     {
-        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
-                new LatLng(markersTerminal.get(index).getPosition().latitude, markersTerminal.get(index).getPosition().longitude)) < 5000);
+        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target, markersTerminal.get(index).getPosition()) < 5000);
     }
 
     public boolean isMarkerInterestClose(int index)
     {
-        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
-                new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < 5000);
+        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target, markersInterest.get(index).getPosition()) < 5000);
     }
 
     @Override
