@@ -24,7 +24,8 @@
                 android:layout_height="?actionBarSize"
                 android:background="@color/colorPrimary"
                 app:navigationIcon="@drawable/ic_menu"
-                app:title="@string/app_name" />
+                app:title="@string/app_name"
+                app:titleTextColor="#ffffff"/>
         </com.google.android.material.appbar.AppBarLayout>
 
         <RelativeLayout
@@ -115,9 +116,51 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/navigation_menu"
         app:headerLayout="@layout/navigation_header"
-        app:elevation="4dp"/>
+        app:elevation="4dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="66dp"
+            android:layout_marginRight="10dp"
+            android:elevation="10dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_interest_legend"
+                    android:paddingVertical="5dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:text="@string/interest"
+                    android:layout_marginHorizontal="36dp"
+                    android:gravity="fill_vertical"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="50dp">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_terminal_legend"
+                    android:paddingVertical="5dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:text="@string/terminal"
+                    android:layout_marginHorizontal="36dp"
+                    android:gravity="fill_vertical"/>
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </com.google.android.material.navigation.NavigationView>
 
 
 </androidx.drawerlayout.widget.DrawerLayout>

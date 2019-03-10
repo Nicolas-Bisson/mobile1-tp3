@@ -2,17 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="16dp"
+    android:layout_height="56dp"
     android:theme="@style/ThemeOverlay.AppCompat"
     android:background="@color/colorPrimaryDark"
-    android:gravity="bottom">
+    android:gravity="center">
 
     <androidx.appcompat.widget.AppCompatTextView
         style="@style/Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-        android:text="Title"
+        android:text="@string/nav_header"
         android:id="@+id/nav_header_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#fff"/>
+        android:layout_height="match_parent"
+        android:textColor="#fff"
+        android:gravity="fill_vertical"
+        android:paddingHorizontal="24dp"/>
 </LinearLayout>
