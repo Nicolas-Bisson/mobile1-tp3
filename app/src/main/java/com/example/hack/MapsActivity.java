@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AsyncParserElectricalTerminal.Listener, AsyncParserPointOfInterest.Listener {
 
@@ -198,15 +199,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void setPointOfInterestNodes()
     {
-        for (int i = 1; i < ParserPointOfInterest.Instance.pointOfInterests.size(); i++) {
+        for (TreeMap.Entry<String, PointOfInterest> entry : ParserPointOfInterest.Instance.pointOfInterests.entrySet())
+        {
             try {
-                if (Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLatitude()) < 90 &&
-                        Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLatitude()) > 40 &&
-                        Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLongitude()) < -60 &&
-                        Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLongitude()) > -80)
+                if (Double.parseDouble(entry.getValue().getLatitude()) < 90 &&
+                        Double.parseDouble(entry.getValue().getLatitude()) > 40 &&
+                        Double.parseDouble(entry.getValue().getLongitude()) < -60 &&
+                        Double.parseDouble(entry.getValue().getLongitude()) > -80)
                     markersInterest.add(mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLatitude()), Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLongitude())))
-                            .title(ParserPointOfInterest.Instance.pointOfInterests.get(i).getNomAttrait())
+                            .position(new LatLng(Double.parseDouble(entry.getValue().getLatitude()), Double.parseDouble(entry.getValue().getLongitude())))
+                            .title(entry.getValue().getNomAttrait())
                             .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))));
             }
             catch (NumberFormatException e)
