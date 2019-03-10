@@ -207,6 +207,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     markersInterest.add(mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude))
                             .title(entry.getValue().getNomAttrait())
+                            .visible(false)
                             .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))));
             }
             catch (NumberFormatException e)
