@@ -189,6 +189,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onMapClick(LatLng latLng) {
                 isTerminalSelected = false;
+                for (int i = 0; i < markersInterest.size(); i++)
+                {
+                    markersInterest.get(i).setVisible(false);
+                }
             }
         });
 
