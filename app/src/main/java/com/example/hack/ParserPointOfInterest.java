@@ -24,7 +24,7 @@ public enum ParserPointOfInterest
     {
         try
         {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamInfo));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamInfo, "ISO-8859-1"));
             String ligne = bufferedReader.readLine();
             ArrayList<String> subString = new ArrayList<>();
 
@@ -48,7 +48,7 @@ public enum ParserPointOfInterest
     {
         try
         {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamAddress));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamAddress, "ISO-8859-1"));
             String ligne = bufferedReader.readLine();
             ArrayList<String> subString = new ArrayList<>();
             int countForReplacements = 0;
