@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Hack</string>
+    <string name="app_name">HackQc 2019</string>
     <string name="title_activity_maps">Map</string>
+    <string name="enter_city_name">Entrer une ville</string>
 </resources>
