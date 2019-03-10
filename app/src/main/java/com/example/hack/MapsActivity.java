@@ -119,8 +119,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-
-
     private void geoLocate()
     {
         String searchString = searchText.getText().toString();
@@ -160,7 +158,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, initialZoom));
-
 
         initSearch();
 
