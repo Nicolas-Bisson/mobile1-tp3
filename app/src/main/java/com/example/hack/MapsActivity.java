@@ -1,11 +1,5 @@
 package com.example.hack;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.pm.ActivityInfo;
@@ -16,7 +10,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -30,7 +23,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.material.navigation.NavigationView;
 import com.google.maps.android.SphericalUtil;
 
 import java.io.FileInputStream;
@@ -40,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, AsyncParserElectricalTerminal.Listener, AsyncParserPointOfInterest.Listener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AsyncParserElectricalTerminal.Listener, AsyncParserPointOfInterest.Listener {
 
     private static final int initialZoom = 12;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
@@ -55,9 +47,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private CheckBox checkInterest;
     private ProgressBar progressBar;
 
-    //Nav Drawer
-    private DrawerLayout drawerLayout;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,28 +56,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
-
-        drawerLayout = findViewById(R.id.drawer_layout);
-
-        NavigationView navigationView = findViewById(R.id.navigation_view);
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        menuItem.setChecked(true);
-
-                        return true;
-                    }
-                }
-        );
-
-        Toolbar toolbar = findViewById(R.id.app_bar);
-        setSupportActionBar(toolbar);
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
-
-
 
         try
         {
@@ -135,21 +102,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         searchText = (EditText) findViewById(R.id.searchText);
-        checkTerminal = findViewById(R.id.checkBox);
-        checkTerminal.setChecked(true);
-        searchText = (EditText) findViewById(R.id.searchText);
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                drawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
 
     private void initSearch()
     {
@@ -165,8 +118,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
     }
-
-
 
     private void geoLocate()
     {
@@ -208,7 +159,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, initialZoom));
 
-
         initSearch();
 
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
@@ -249,11 +199,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         for (TreeMap.Entry<String, PointOfInterest> entry : ParserPointOfInterest.Instance.pointOfInterests.entrySet())
         {
             try {
-                double latitude = Double.parseDouble(entry.getValue().getLatitude());
-                double longitude = Double.parseDouble(entry.getValue().getLongitude());
-                if (latitude < 90 && latitude > 40 && longitude < -60 && longitude > -80)
+                if (Double.parseDouble(entry.getValue().getLatitude()) < 90 &&
+                        Double.parseDouble(entry.getValue().getLatitude()) > 40 &&
+                        Double.parseDouble(entry.getValue().getLongitude()) < -60 &&
+                        Double.parseDouble(entry.getValue().getLongitude()) > -80)
                     markersInterest.add(mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(latitude, longitude))
+                            .position(new LatLng(Double.parseDouble(entry.getValue().getLatitude()), Double.parseDouble(entry.getValue().getLongitude())))
                             .title(entry.getValue().getNomAttrait())
                             .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))));
             }
@@ -274,11 +225,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     {
         for (int i = 1; i < ParserElectricalTerminal.Instance.electricalTerminals.size(); i++) {
             try {
-                double latitude = Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude());
-                double longitude = Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude());
-                if (latitude < 90 && latitude > 40 && longitude < -60 && longitude > -80)
+                if (Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()) < 90 &&
+                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()) > 40 &&
+                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude()) < -60 &&
+                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude()) > -80)
                         markersTerminal.add(mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(latitude, longitude))
+                        .position(new LatLng(Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude())))
                         .title(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getNameElectricalTerminal())
                         .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_electrical_terminal))));
             }
@@ -291,12 +243,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public boolean isMarkerTerminalClose(int index)
     {
-        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target, markersTerminal.get(index).getPosition()) < 5000);
+        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
+                new LatLng(markersTerminal.get(index).getPosition().latitude, markersTerminal.get(index).getPosition().longitude)) < 5000);
     }
 
     public boolean isMarkerInterestClose(int index)
     {
-        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target, markersInterest.get(index).getPosition()) < 5000);
+        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
+                new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < 5000);
     }
 
     @Override
