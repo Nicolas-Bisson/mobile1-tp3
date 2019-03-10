@@ -117,7 +117,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         searchText = (EditText) findViewById(R.id.searchText);
 
-        distanceCheckTerminal = 5000;
+        distanceCheckTerminal = 15000;
         distanceCheckInterest = 5000;
         isTerminalSelected = false;
         indexTerminal = 0;
@@ -198,14 +198,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
-            public void onCameraIdle() {
-                if(!isTerminalSelected)
-                {
+            public void onCameraIdle()
+            {
                     distanceCheckInterest = 5000;
-                    for (int i = 0; i < markersInterest.size(); i++)
-                    {
-                        markersInterest.get(i).setVisible(false);
-                    }
 
                     for (int i = 0; i < markersTerminal.size(); i++)
                     {
@@ -219,8 +214,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
 
                     }
-                }
-                else
+
+                if(isTerminalSelected)
                 {
                     for (int i = 0; i < markersTerminal.size(); i++)
                     {
