@@ -110,6 +110,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void geoLocate()
     {
+        isTerminalSelected = false;
         String searchString = searchText.getText().toString();
 
         Geocoder geocoder = new Geocoder(MapsActivity.this);
@@ -151,6 +152,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         initSearch();
 
         mMap.setOnMarkerClickListener(this);
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                isTerminalSelected = false;
+            }
+        });
 
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
@@ -298,10 +305,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onParsePointOfInterestComplete()
     {
         setPointOfInterestNodes();
-    }
-
-    private boolean isTerminalSelected()
-    {
-        return isTerminalSelected;
     }
 }
