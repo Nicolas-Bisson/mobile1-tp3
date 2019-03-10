@@ -25,41 +25,17 @@
                 android:background="@color/colorPrimary"
                 app:navigationIcon="@drawable/ic_menu"
                 app:title="@string/app_name" />
-        </com.google.android.material.appbar.AppBarLayout><CheckBox
-        android:id="@+id/checkBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/map"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="13dp"
-        android:layout_marginBottom="9dp"
-        android:text="Borne" />
+        </com.google.android.material.appbar.AppBarLayout>
 
-    <CheckBox
-        android:id="@+id/checkBoxI"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/map"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="99dp"
-        android:layout_marginBottom="9dp"
-        android:text="Touristique" />
-
-    <com.google.android.material.button.MaterialButton
-        android:layout_width="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/common_google_play_services_enable_button"
-        android:layout_height="wrap_content"/>
-
-    <RelativeLayout
-        android:id="@+id/searchBar_"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:elevation="10dp"
-        android:background="@drawable/white_border">
+        <RelativeLayout
+            android:id="@+id/searchBar_"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="66dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/white_border"
+            android:elevation="10dp">
 
             <ImageView
                 android:id="@+id/magnifyIcon"
@@ -90,6 +66,19 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="?actionBarSize" />
+
+
+        <CheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Borne" />
+
+        <CheckBox
+            android:id="@+id/checkBoxI"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Touristique" />
 
         <ProgressBar
             android:id="@+id/progressBar"
