@@ -1,11 +1,5 @@
 package com.example.hack;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.FragmentActivity;
 
 import android.content.pm.ActivityInfo;
@@ -16,7 +10,6 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -65,28 +58,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
 
-//        drawerLayout = findViewById(R.id.drawer_layout);
-//
-//        NavigationView navigationView = findViewById(R.id.navigation_view);
-//        navigationView.setNavigationItemSelectedListener(
-//                new NavigationView.OnNavigationItemSelectedListener() {
-//                    @Override
-//                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-//                        menuItem.setChecked(true);
-//
-//                        return true;
-//                    }
-//                }
-//        );
-//
-//        Toolbar toolbar = findViewById(R.id.app_bar);
-//        setSupportActionBar(toolbar);
-//        ActionBar actionbar = getSupportActionBar();
-//        actionbar.setDisplayHomeAsUpEnabled(true);
-//        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
-
-
-
         try
         {
             final InputStream FILE_ELECTRICAL_TERMINAL = this.getResources().openRawResource(R.raw.bornes);
@@ -131,9 +102,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        searchText = (EditText) findViewById(R.id.searchText);
-        checkTerminal = findViewById(R.id.checkBox);
-        checkTerminal.setChecked(true);
         searchText = (EditText) findViewById(R.id.searchText);
     }
 
