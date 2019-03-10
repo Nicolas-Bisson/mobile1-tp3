@@ -11,11 +11,11 @@ public enum ParserPointOfInterest
 {
     Instance;
 
-    public ArrayList<PointOfInterest> pointOfInterests;
-    
+    public TreeMap<String, PointOfInterest> pointOfInterests;
+
     public void Parse(InputStream inputStreamInfo, InputStream inputStreamAddress)
     {
-        pointOfInterests = new ArrayList<>();
+        pointOfInterests = new TreeMap<>();
         chargerCSVInfo(inputStreamInfo);
         chargerCSVAdresse(inputStreamAddress);
         System.out.println("");
@@ -27,14 +27,11 @@ public enum ParserPointOfInterest
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamInfo));
             String ligne = bufferedReader.readLine();
             ArrayList<String> subString = new ArrayList<>();
-            int countOfCreatedPointOfInterest = 0;
 
             while (ligne != null)
             {
                 String[] info = ligne.split(",");
-                pointOfInterests.add(new PointOfInterest(info[0]));
-                pointOfInterests.get(countOfCreatedPointOfInterest).setNomAttrait(info[1]);
-                countOfCreatedPointOfInterest++;
+                pointOfInterests.put(info[0], new PointOfInterest(info[1]));
                 ligne = bufferedReader.readLine();
             }
 
@@ -76,23 +73,27 @@ public enum ParserPointOfInterest
                     countForReplacements++;
                 }
                 String[] info = ligne.split("/");;
-                for(int countVerification = 0; countVerification < pointOfInterests.size() - 1; countVerification++)
+                if(pointOfInterests.containsKey(info[0]))
                 {
-                    PointOfInterest pointOfInterestAVerifier = pointOfInterests.get(countVerification);
-                    if(pointOfInterestAVerifier.getID().equals(info[0]))
+                    if(info.length >= 15)
                     {
-                        if(info.length >= 15)
-                        {
-                            pointOfInterestAVerifier.setLatitude(info[14]);
-                            pointOfInterestAVerifier.setLongitude(info[15]);
-                        }
+                        pointOfInterests.get(info[0]).setLatitude(info[14]);
+                        pointOfInterests.get(info[0]).setLongitude(info[15]);
                     }
                 }
                 ligne = bufferedReader.readLine();
             }
 
+            for (TreeMap.Entry<String, PointOfInterest> entry : pointOfInterests.entrySet())
+            {
+                entry.getValue().getLatitude();
+                entry.getValue().getLongitude();
+            }
             bufferedReader.readLine();
             return true;
+
+
+
         }
         catch (Exception e)
         {

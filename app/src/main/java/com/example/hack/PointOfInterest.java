@@ -2,32 +2,20 @@ package com.example.hack;
 
 public class PointOfInterest
 {
-    private String ID;
     private String nomAttrait;
     private String latitude;
     private String longitude;
 
-    public PointOfInterest(String ID, String nomBorne, String latitude, String longitude)
+    public PointOfInterest(String nomAttrait, String latitude, String longitude)
     {
-        this.ID = ID;
-        this.nomAttrait = nomBorne;
+        this.nomAttrait = nomAttrait;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public PointOfInterest(String ID)
+    public PointOfInterest(String nomBorne)
     {
-        this.ID = ID;
-    }
-
-    public String getID()
-    {
-        return ID;
-    }
-
-    public void setID(String ID)
-    {
-        this.ID = ID;
+        this.nomAttrait = getNomAttrait();
     }
 
     public String getNomAttrait()
