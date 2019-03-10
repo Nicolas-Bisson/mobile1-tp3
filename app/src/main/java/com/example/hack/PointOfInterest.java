@@ -13,9 +13,9 @@ public class PointOfInterest
         this.longitude = longitude;
     }
 
-    public PointOfInterest(String nomBorne)
+    public PointOfInterest(String nomAttrait)
     {
-        this.nomAttrait = getNomAttrait();
+        this.nomAttrait = nomAttrait;
     }
 
     public String getNomAttrait()

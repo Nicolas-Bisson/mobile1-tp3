@@ -40,30 +40,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, AsyncParserElectricalTerminal.Listener, AsyncParserPointOfInterest.Listener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, AsyncParserElectricalTerminal.Listener,
+        AsyncParserPointOfInterest.Listener, GoogleMap.OnMarkerClickListener {
 
     private static final int initialZoom = 12;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private GoogleMap mMap;
-    private TextWatcher textWatcher;
+
+    private int distanceCheckTerminal;
+    private int distanceCheckInterest;
+    private boolean isTerminalSelected;
+    private int indexTerminal;
 
     //widgets
     private EditText searchText;
     private ArrayList<Marker> markersTerminal;
     private ArrayList<Marker> markersInterest;
-    private CheckBox checkTerminal;
-    private CheckBox checkInterest;
     private ProgressBar progressBar;
-
-    //Nav Drawer
     private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
@@ -102,42 +101,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mapFragment.getMapAsync(this);
         }
 
-        checkTerminal = findViewById(R.id.checkBox);
-        checkTerminal.setChecked(true);
-
-        checkTerminal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
-            }
-        });
-
-        checkInterest = findViewById(R.id.checkBoxI);
-        checkInterest.setChecked(false);
-
-        checkInterest.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
-            }
-        });
-
         searchText = (EditText) findViewById(R.id.searchText);
-        checkTerminal = findViewById(R.id.checkBox);
-        checkTerminal.setChecked(true);
-        searchText = (EditText) findViewById(R.id.searchText);
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                drawerLayout.openDrawer(GravityCompat.START);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
+        distanceCheckTerminal = 15000;
+        distanceCheckInterest = 5000;
+        isTerminalSelected = false;
+        indexTerminal = 0;
     }
-
 
     private void initSearch()
     {
@@ -154,10 +124,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-
-
     private void geoLocate()
     {
+        isTerminalSelected = false;
         String searchString = searchText.getText().toString();
 
         Geocoder geocoder = new Geocoder(MapsActivity.this);
@@ -196,40 +165,88 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, initialZoom));
 
-
         initSearch();
+        for (int i = 0; i < markersInterest.size(); i++)
+        {
+            markersInterest.get(i).setVisible(false);
+        }
+        mMap.setOnMarkerClickListener(this);
+        mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                isTerminalSelected = false;
+                for (int i = 0; i < markersInterest.size(); i++)
+                {
+                    markersInterest.get(i).setVisible(false);
+                }
+            }
+        });
 
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
-            public void onCameraIdle() {
-                if (checkTerminal.isChecked()) {
-                    for (int i = 0; i < markersTerminal.size(); i++) {
-                        if (isMarkerTerminalClose(i))
+            public void onCameraIdle()
+            {
+                    distanceCheckInterest = 5000;
+
+                    for (int i = 0; i < markersTerminal.size(); i++)
+                    {
+                        if (!isMarkerTerminalClose(i))
+                        {
+                            markersTerminal.get(i).setVisible(false);
+                        }
+                        else
+                        {
                             markersTerminal.get(i).setVisible(true);
-                        else
-                            markersTerminal.get(i).setVisible(false);
+                        }
+
                     }
-                }
-                else {
-                    for (int i = 0; i < markersTerminal.size(); i++) {
-                            markersTerminal.get(i).setVisible(false);
-                    }
-                }
-                if (checkInterest.isChecked()) {
-                    for (int i = 0; i < markersInterest.size(); i++) {
-                        if (isMarkerInterestClose(i))
-                            markersInterest.get(i).setVisible(true);
-                        else
-                            markersInterest.get(i).setVisible(false);
-                    }
-                }
-                else {
-                    for (int i = 0; i < markersInterest.size(); i++) {
-                        markersInterest.get(i).setVisible(false);
+
+                if(isTerminalSelected)
+                {
+                    for (int i = 0; i < markersTerminal.size(); i++)
+                    {
+                        if(i == indexTerminal)
+                        {
+                            for (int j = 0; j < markersInterest.size(); j++)
+                            {
+                                if(isMarkerInterestClose(j, indexTerminal))
+                                {
+                                    markersInterest.get(j).setVisible(true);
+                                }
+                            }
+                        }
                     }
                 }
             }
         });
+    }
+
+    public boolean onMarkerClick(final Marker marker)
+    {
+
+        for (int i = 0; i < markersTerminal.size(); i++)
+        {
+            if (marker.equals(markersTerminal.get(i)))
+            {
+                isTerminalSelected = true;
+                indexTerminal = i;
+                distanceCheckInterest = 5000;
+
+                for (int j = 0; j < markersInterest.size(); j++)
+                {
+                    if (isMarkerInterestClose(j, indexTerminal))
+                    {
+                        markersInterest.get(j).setVisible(true);
+                    }
+                    else
+                    {
+                        markersInterest.get(j).setVisible(false);
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     private void setPointOfInterestNodes()
@@ -243,6 +260,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     markersInterest.add(mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude))
                             .title(entry.getValue().getNomAttrait())
+                            .visible(false)
                             .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))));
             }
             catch (NumberFormatException e)
@@ -267,7 +285,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (latitude < 90 && latitude > 40 && longitude < -60 && longitude > -80)
                         markersTerminal.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
-                        .title(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getNameElectricalTerminal())
                         .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_electrical_terminal))));
             }
             catch (NumberFormatException e)
@@ -282,9 +299,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target, markersTerminal.get(index).getPosition()) < 5000);
     }
 
-    public boolean isMarkerInterestClose(int index)
+    public boolean isMarkerInterestClose(int index, int indexTerminal)
     {
-        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target, markersInterest.get(index).getPosition()) < 5000);
+        if(indexTerminal <= -1)
+        {
+            return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
+                    new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < distanceCheckInterest);
+        }
+        else
+        {
+            return (SphericalUtil.computeDistanceBetween(markersTerminal.get(indexTerminal).getPosition(),
+                    new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < distanceCheckInterest);
+        }
     }
 
     @Override

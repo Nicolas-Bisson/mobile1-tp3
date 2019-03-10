@@ -38,28 +38,29 @@
             android:background="@drawable/searchbar_bg"
             android:elevation="10dp">
 
-            <ImageView
-                android:id="@+id/magnifyIcon"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:src="@drawable/ic_magnify" />
+        <ImageView
+            android:id="@+id/magnifyIcon"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_magnify" />
 
-            <EditText
-                android:id="@+id/searchText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_toEndOf="@id/magnifyIcon"
-                android:background="@null"
-                android:hint="Enter city name"
-                android:imeOptions="actionSearch"
-                android:singleLine="true"
-                android:textColor="#000"
-                android:textSize="15sp" />
-        </RelativeLayout>
+        <EditText
+            android:id="@+id/searchText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/magnifyIcon"
+            android:layout_marginStart="10dp"
+            android:layout_centerVertical="true"
+            android:textSize="15sp"
+            android:textColor="#000"
+            android:background="@null"
+            android:hint="@string/enter_city_name"
+            android:singleLine="true"
+            android:imeOptions="actionSearch"
+            />
+    </RelativeLayout>
 
         <fragment
             android:id="@+id/map"
@@ -86,25 +87,12 @@
             android:layout_height="28dp"
             android:layout_gravity="bottom|right"
             android:layout_marginBottom="28dp">
-            <CheckBox
-                android:id="@+id/checkBox"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Bornes"
-                android:layout_centerInParent="true"
-                android:checked="true"/>
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="110dp"
             android:layout_height="28dp"
             android:layout_gravity="bottom|right">
-            <CheckBox
-                android:id="@+id/checkBoxI"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Intérêt"
-                android:layout_centerInParent="true"/>
         </RelativeLayout>
     </FrameLayout>
 

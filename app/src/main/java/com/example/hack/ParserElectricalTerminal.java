@@ -21,7 +21,7 @@ public enum ParserElectricalTerminal
     {
         try
         {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-1"));
             String ligne = bufferedReader.readLine();
             ArrayList<String> subString = new ArrayList<>();
             int countForReplacements = 0;
@@ -29,11 +29,10 @@ public enum ParserElectricalTerminal
             while (ligne != null)
             {
                 countForReplacements = 0;
-                boolean containQuotes = false;
+                boolean containQuotes = ligne.contains("\"");
                 subString = new ArrayList<>();
                 while(ligne.contains("\""))
                 {
-                    containQuotes = true;
                     int positionFirstQuote = ligne.indexOf('\"');
                     subString.add(ligne.substring(positionFirstQuote, ligne.indexOf('\"', positionFirstQuote + 1)+ 1));
                     ligne = ligne.replace(subString.get(countForReplacements), "=" + countForReplacements);
@@ -47,7 +46,7 @@ public enum ParserElectricalTerminal
                     countForReplacements++;
                 }
                 String[] info = ligne.split("/");
-                electricalTerminals.add(new ElectricalTerminal(info[0],info[4],info[5]));
+                electricalTerminals.add(new ElectricalTerminal(info[0], info[4],info[5]));
                 ligne = bufferedReader.readLine();
             }
 

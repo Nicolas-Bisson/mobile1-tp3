@@ -39,5 +39,6 @@ public class ElectricalTerminal
     {
         this.longitude = longitude;
     }
+
 }
 
