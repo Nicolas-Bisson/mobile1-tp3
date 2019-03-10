@@ -38,7 +38,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int initialZoom = 12;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private GoogleMap mMap;
-   // private LatLng screenCenter;
 
     private int distanceCheckTerminal;
     private int distanceCheckInterest;
@@ -150,7 +149,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, initialZoom));
 
         initSearch();
-
+        for (int i = 0; i < markersInterest.size(); i++)
+        {
+            markersInterest.get(i).setVisible(false);
+        }
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
