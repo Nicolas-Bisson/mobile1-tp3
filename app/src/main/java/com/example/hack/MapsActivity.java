@@ -244,7 +244,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             {
                 isTerminalSelected = true;
                 indexTerminal = i;
-                distanceCheckInterest = 2000;
+                distanceCheckInterest = 5000;
 
                 for (int j = 0; j < markersInterest.size(); j++)
                 {
