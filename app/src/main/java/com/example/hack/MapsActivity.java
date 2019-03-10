@@ -150,42 +150,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, initialZoom));
-        for (int i = 1; i < ParserElectricalTerminal.Instance.electricalTerminals.size(); i++) {
-            try {
-                if (Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()) < 90 &&
-                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()) > 40 &&
-                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude()) < -60 &&
-                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude()) > -80)
-                        markersTerminal.add(mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude())))
-                        .title(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getNameElectricalTerminal())
-                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_electrical_terminal))));
-            }
-            catch (NumberFormatException e)
-            {
-                System.out.println(e.toString());
-            }
-        }
-        for (int i = 1; i < ParserPointOfInterest.Instance.pointOfInterests.size(); i++) {
-            try {
-                if (Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLatitude()) < 90 &&
-                        Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLatitude()) > 40 &&
-                        Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLongitude()) < -60 &&
-                        Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLongitude()) > -80)
-                    markersInterest.add(mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLatitude()), Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLongitude())))
-                            .title(ParserPointOfInterest.Instance.pointOfInterests.get(i).getNomAttrait())
-                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))));
-            }
-            catch (NumberFormatException e)
-            {
-                System.out.println(e.toString());
-            }
-            catch (NullPointerException e)
-            {
-                System.out.println(e.toString());
-            }
-        }
+
 
         initSearch();
 
@@ -225,7 +190,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLongitude()) > -80)
                     markersInterest.add(mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLatitude()), Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLongitude())))
-                            .title(ParserPointOfInterest.Instance.pointOfInterests.get(i).getNomAttrait())));
+                            .title(ParserPointOfInterest.Instance.pointOfInterests.get(i).getNomAttrait())
+                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))));
             }
             catch (NumberFormatException e)
             {
@@ -249,7 +215,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude()) > -80)
                         markersTerminal.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude())))
-                        .title(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getNameElectricalTerminal())));
+                        .title(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getNameElectricalTerminal())
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_electrical_terminal))));
             }
             catch (NumberFormatException e)
             {
