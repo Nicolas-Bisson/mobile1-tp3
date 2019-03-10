@@ -2,5 +2,4 @@
 <resources>
     <string name="app_name">Hack</string>
     <string name="title_activity_maps">Map</string>
-    <string name="switch_text">Switch</string>
 </resources>
