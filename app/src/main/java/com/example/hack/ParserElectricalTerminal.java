@@ -33,7 +33,8 @@ public enum ParserElectricalTerminal
                 subString = new ArrayList<>();
                 while(ligne.contains("\""))
                 {
-                    subString.add(ligne.substring(ligne.indexOf('\"'), ligne.indexOf('\"', ligne.indexOf('\"') + 1)+ 1));
+                    int positionFirstQuote = ligne.indexOf('\"');
+                    subString.add(ligne.substring(positionFirstQuote, ligne.indexOf('\"', positionFirstQuote + 1)+ 1));
                     ligne = ligne.replace(subString.get(countForReplacements), "=" + countForReplacements);
                     countForReplacements++;
                 }

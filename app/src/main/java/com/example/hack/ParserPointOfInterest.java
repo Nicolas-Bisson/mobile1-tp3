@@ -5,13 +5,14 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 public enum ParserPointOfInterest
 {
     Instance;
 
     public ArrayList<PointOfInterest> pointOfInterests;
-
+    
     public void Parse(InputStream inputStreamInfo, InputStream inputStreamAddress)
     {
         pointOfInterests = new ArrayList<>();
@@ -26,13 +27,14 @@ public enum ParserPointOfInterest
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamInfo));
             String ligne = bufferedReader.readLine();
             ArrayList<String> subString = new ArrayList<>();
-            int i = 0;
+            int countOfCreatedPointOfInterest = 0;
 
             while (ligne != null)
             {
                 String[] info = ligne.split(",");
                 pointOfInterests.add(new PointOfInterest(info[0]));
-                pointOfInterests.get((pointOfInterests.size() - 1)).setNomAttrait(info[1]);
+                pointOfInterests.get(countOfCreatedPointOfInterest).setNomAttrait(info[1]);
+                countOfCreatedPointOfInterest++;
                 ligne = bufferedReader.readLine();
             }
 
@@ -52,30 +54,31 @@ public enum ParserPointOfInterest
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamAddress));
             String ligne = bufferedReader.readLine();
             ArrayList<String> subString = new ArrayList<>();
-            int i = 0;
+            int countForReplacements = 0;
 
             while (ligne != null)
             {
-                i = 0;
+                countForReplacements = 0;
                 boolean containQuotes = ligne.contains("\"");
                 subString = new ArrayList<>();
                 while(ligne.contains("\""))
                 {
-                    subString.add(ligne.substring(ligne.indexOf('\"'), ligne.indexOf('\"', ligne.indexOf('\"') + 1)+ 1));
-                    ligne = ligne.replace(subString.get(i), "=" + i);
-                    i++;
+                    int positionFirstQuote = ligne.indexOf('\"');
+                    subString.add(ligne.substring(positionFirstQuote, ligne.indexOf('\"', positionFirstQuote + 1)+ 1));
+                    ligne = ligne.replace(subString.get(countForReplacements), "=" + countForReplacements);
+                    countForReplacements++;
                 }
                 ligne = ligne.replace(',', '/');
-                i = 0;
+                countForReplacements = 0;
                 while(containQuotes && ligne.contains("="))
                 {
-                    ligne = ligne.replace("=" + i, subString.get(i));
-                    i++;
+                    ligne = ligne.replace("=" + countForReplacements, subString.get(countForReplacements));
+                    countForReplacements++;
                 }
                 String[] info = ligne.split("/");;
-                for(int j = 0; j < pointOfInterests.size() - 1; j++)
+                for(int countVerification = 0; countVerification < pointOfInterests.size() - 1; countVerification++)
                 {
-                    PointOfInterest pointOfInterestAVerifier = pointOfInterests.get(j);
+                    PointOfInterest pointOfInterestAVerifier = pointOfInterests.get(countVerification);
                     if(pointOfInterestAVerifier.getID().equals(info[0]))
                     {
                         if(info.length >= 15)
