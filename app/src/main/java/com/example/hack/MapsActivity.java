@@ -37,6 +37,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private GoogleMap mMap;
     private TextWatcher textWatcher;
+    private LatLng screenCenter;
 
     //widgets
     private EditText searchText;
@@ -86,7 +87,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         checkTerminal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(screenCenter, mMap.getCameraPosition().zoom));
             }
         });
 
@@ -96,7 +97,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         checkInterest.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(screenCenter, mMap.getCameraPosition().zoom));
             }
         });
 
@@ -160,12 +161,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, initialZoom));
 
+        //screenCenter = new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude);
 
         initSearch();
 
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
             public void onCameraIdle() {
+                screenCenter = new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude);
                 if (checkTerminal.isChecked()) {
                     for (int i = 0; i < markersTerminal.size(); i++) {
                         if (isMarkerTerminalClose(i))
@@ -218,7 +221,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 System.out.println(e.toString());
             }
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(screenCenter, mMap.getCameraPosition().zoom));
         progressBar.setVisibility(View.GONE);
     }
 
@@ -244,7 +247,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public boolean isMarkerTerminalClose(int index)
     {
-        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
+        return (SphericalUtil.computeDistanceBetween(screenCenter,
                 new LatLng(markersTerminal.get(index).getPosition().latitude, markersTerminal.get(index).getPosition().longitude)) < 5000);
     }
 
