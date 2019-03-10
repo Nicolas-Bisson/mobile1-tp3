@@ -32,7 +32,7 @@ import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AsyncParserElectricalTerminal.Listener, AsyncParserPointOfInterest.Listener {
 
-    private static final int initialZoom = 8;
+    private static final int initialZoom = 12;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private GoogleMap mMap;
     private TextWatcher textWatcher;
@@ -91,14 +91,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         searchText = (EditText) findViewById(R.id.searchText);
         checkTerminal = findViewById(R.id.checkBox);
         checkTerminal.setChecked(true);
-
-
-        checkTerminal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
-            }
-        });
     }
 
     private void initSearch()
@@ -207,6 +199,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 System.out.println(e.toString());
             }
         }
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
     }
 
     private void setElectricalTerminalNodes()
@@ -231,13 +224,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean isMarkerTerminalClose(int index)
     {
         return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
-                new LatLng(markersTerminal.get(index).getPosition().latitude, markersTerminal.get(index).getPosition().longitude)) < 30000);
+                new LatLng(markersTerminal.get(index).getPosition().latitude, markersTerminal.get(index).getPosition().longitude)) < 5000);
     }
 
     public boolean isMarkerInterestClose(int index)
     {
         return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
-                new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < 30000);
+                new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < 5000);
     }
 
     @Override
