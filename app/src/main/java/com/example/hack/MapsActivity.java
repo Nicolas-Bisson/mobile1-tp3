@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.SphericalUtil;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AsyncParserElectricalTerminal.Listener, AsyncParserPointOfInterest.Listener {
 
-    private static final int initialZoom = 8;
+    private static final int initialZoom = 12;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private GoogleMap mMap;
     private TextWatcher textWatcher;
@@ -91,14 +92,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         searchText = (EditText) findViewById(R.id.searchText);
         checkTerminal = findViewById(R.id.checkBox);
         checkTerminal.setChecked(true);
-
-
-        checkTerminal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
-            }
-        });
     }
 
     private void initSearch()
@@ -222,27 +215,70 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
+    private void setPointOfInterestNodes()
+    {
+        for (int i = 1; i < ParserPointOfInterest.Instance.pointOfInterests.size(); i++) {
+            try {
+                if (Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLatitude()) < 90 &&
+                        Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLatitude()) > 40 &&
+                        Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLongitude()) < -60 &&
+                        Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLongitude()) > -80)
+                    markersInterest.add(mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLatitude()), Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLongitude())))
+                            .title(ParserPointOfInterest.Instance.pointOfInterests.get(i).getNomAttrait())));
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println(e.toString());
+            }
+            catch (NullPointerException e)
+            {
+                System.out.println(e.toString());
+            }
+        }
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
+    }
+
+    private void setElectricalTerminalNodes()
+    {
+        for (int i = 1; i < ParserElectricalTerminal.Instance.electricalTerminals.size(); i++) {
+            try {
+                if (Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()) < 90 &&
+                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()) > 40 &&
+                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude()) < -60 &&
+                        Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude()) > -80)
+                        markersTerminal.add(mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude()), Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude())))
+                        .title(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getNameElectricalTerminal())));
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println(e.toString());
+            }
+        }
+    }
+
     public boolean isMarkerTerminalClose(int index)
     {
         return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
-                new LatLng(markersTerminal.get(index).getPosition().latitude, markersTerminal.get(index).getPosition().longitude)) < 30000);
+                new LatLng(markersTerminal.get(index).getPosition().latitude, markersTerminal.get(index).getPosition().longitude)) < 5000);
     }
 
     public boolean isMarkerInterestClose(int index)
     {
         return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
-                new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < 30000);
+                new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < 5000);
     }
 
     @Override
     public void onParseElectricalTerminalComplete()
     {
-
+        setElectricalTerminalNodes();
     }
 
     @Override
     public void onParsePointOfInterestComplete()
     {
-
+        setPointOfInterestNodes();
     }
 }
