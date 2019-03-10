@@ -43,6 +43,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<Marker> markersTerminal;
     private ArrayList<Marker> markersInterest;
     private CheckBox checkTerminal;
+    private CheckBox checkInterest;
     private ProgressBar progressBar;
 
     @Override
@@ -53,6 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         progressBar = findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.VISIBLE);
 
         try
         {
@@ -67,7 +69,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         {
             System.out.println(e.toString());
         }
-        progressBar.setVisibility(View.GONE);
+
 
         markersTerminal = new ArrayList<>();
         markersInterest = new ArrayList<>();
@@ -88,10 +90,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        checkInterest = findViewById(R.id.checkBoxI);
+        checkInterest.setChecked(false);
+
+        checkInterest.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
+            }
+        });
 
         searchText = (EditText) findViewById(R.id.searchText);
-        checkTerminal = findViewById(R.id.checkBox);
-        checkTerminal.setChecked(true);
     }
 
     private void initSearch()
@@ -170,11 +179,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             markersTerminal.get(i).setVisible(false);
                     }
                 }
-                for (int i = 0; i < markersInterest.size(); i++) {
-                    if (isMarkerInterestClose(i))
-                        markersInterest.get(i).setVisible(true);
-                    else
+                if (checkInterest.isChecked()) {
+                    for (int i = 0; i < markersInterest.size(); i++) {
+                        if (isMarkerInterestClose(i))
+                            markersInterest.get(i).setVisible(true);
+                        else
+                            markersInterest.get(i).setVisible(false);
+                    }
+                }
+                else {
+                    for (int i = 0; i < markersInterest.size(); i++) {
                         markersInterest.get(i).setVisible(false);
+                    }
                 }
             }
         });
@@ -203,6 +219,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
+        progressBar.setVisibility(View.GONE);
     }
 
     private void setElectricalTerminalNodes()
