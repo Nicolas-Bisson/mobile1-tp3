@@ -39,6 +39,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //widgets
     private EditText searchText;
     private ArrayList<Marker> markersTerminal;
+    private ArrayList<Marker> markersInterest;
     private CheckBox checkTerminal;
     private ProgressBar progressBar;
 
@@ -57,7 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             asyncParserElectricalTerminal.execute(FILE_ELECTRICAL_TERMINAL);
             final InputStream[] FILE_POINT_OF_INTEREST = new InputStream[]{this.getResources().openRawResource(R.raw.attraitsinfo),this.getResources().openRawResource(R.raw.attraitsadresse)};
             AsyncParserPointOfInterest asyncParserPointOfInterest = new AsyncParserPointOfInterest(this);
-            asyncParserElectricalTerminal.execute(FILE_POINT_OF_INTEREST);
+            asyncParserPointOfInterest.execute(FILE_POINT_OF_INTEREST);
         }
         catch (Exception e)
         {
@@ -66,6 +67,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         progressBar.setVisibility(View.GONE);
 
         markersTerminal = new ArrayList<>();
+        markersInterest = new ArrayList<>();
 
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -95,8 +97,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
             }
         });
-
-        searchText = (EditText) findViewById(R.id.searchText);
     }
 
     private void initSearch()
@@ -170,6 +170,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 System.out.println(e.toString());
             }
         }
+        for (int i = 1; i < ParserPointOfInterest.Instance.pointOfInterests.size(); i++) {
+            try {
+                if (Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLatitude()) < 90 &&
+                        Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLatitude()) > 40 &&
+                        Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLongitude()) < -60 &&
+                        Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLongitude()) > -80)
+                    markersInterest.add(mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLatitude()), Double.parseDouble(ParserPointOfInterest.Instance.pointOfInterests.get(i).getLongitude())))
+                            .title(ParserPointOfInterest.Instance.pointOfInterests.get(i).getNomAttrait())));
+            }
+            catch (NumberFormatException e)
+            {
+                System.out.println(e.toString());
+            }
+            catch (NullPointerException e)
+            {
+                System.out.println(e.toString());
+            }
+        }
 
         initSearch();
 
@@ -178,7 +197,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onCameraIdle() {
                 if (checkTerminal.isChecked()) {
                     for (int i = 0; i < markersTerminal.size(); i++) {
-                        if (isMarkerClose(i))
+                        if (isMarkerTerminalClose(i))
                             markersTerminal.get(i).setVisible(true);
                         else
                             markersTerminal.get(i).setVisible(false);
@@ -189,14 +208,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             markersTerminal.get(i).setVisible(false);
                     }
                 }
+                for (int i = 0; i < markersInterest.size(); i++) {
+                    if (isMarkerInterestClose(i))
+                        markersInterest.get(i).setVisible(true);
+                    else
+                        markersInterest.get(i).setVisible(false);
+                }
             }
         });
     }
 
-    public boolean isMarkerClose(int index)
+    public boolean isMarkerTerminalClose(int index)
     {
         return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
                 new LatLng(markersTerminal.get(index).getPosition().latitude, markersTerminal.get(index).getPosition().longitude)) < 30000);
+    }
+
+    public boolean isMarkerInterestClose(int index)
+    {
+        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
+                new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < 30000);
     }
 
     @Override
