@@ -232,7 +232,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (latitude < 90 && latitude > 40 && longitude < -60 && longitude > -80)
                         markersTerminal.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
-                        .title(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getNameElectricalTerminal())
                         .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_electrical_terminal))));
             }
             catch (NumberFormatException e)

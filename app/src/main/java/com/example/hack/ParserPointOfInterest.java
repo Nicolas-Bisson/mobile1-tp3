@@ -1,10 +1,13 @@
 package com.example.hack;
 
+import android.content.res.Resources;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.TreeMap;
 
 public enum ParserPointOfInterest
@@ -31,7 +34,10 @@ public enum ParserPointOfInterest
             while (ligne != null)
             {
                 String[] info = ligne.split(",");
+                if(Resources.getSystem().getConfiguration().locale.getLanguage().equals("fr"))
                 pointOfInterests.put(info[0], new PointOfInterest(info[1]));
+                else
+                pointOfInterests.put(info[0], new PointOfInterest(info[2]));
                 ligne = bufferedReader.readLine();
             }
 
