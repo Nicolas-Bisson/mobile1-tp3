@@ -20,7 +20,7 @@ public class AsyncParserElectricalTerminal extends AsyncTask<InputStream, Void, 
     @Override
     protected Void doInBackground(InputStream... inputStreams)
     {
-        ParserElectricalTerminal.Instance.Parse(inputStreams[0]);
+        ParseElectricalTerminal.Instance.Parse(inputStreams[0]);
         return null;
     }
 

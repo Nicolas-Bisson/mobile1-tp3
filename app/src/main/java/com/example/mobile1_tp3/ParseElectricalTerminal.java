@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public enum ParserElectricalTerminal
+public enum ParseElectricalTerminal
 {
     Instance;
 

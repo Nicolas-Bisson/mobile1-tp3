@@ -20,7 +20,7 @@ public class AsyncParserPointOfInterest extends AsyncTask<InputStream, Void, Voi
     @Override
     protected Void doInBackground(InputStream... inputStreams)
     {
-        ParserPointOfInterest.Instance.Parse(inputStreams[0], inputStreams[1]);
+        ParsePointOfInterest.Instance.Parse(inputStreams[0], inputStreams[1]);
         return null;
     }
 

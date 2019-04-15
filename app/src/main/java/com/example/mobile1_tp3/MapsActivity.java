@@ -101,6 +101,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         isTerminalSelected = false;
         indexTerminal = 0;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -254,7 +255,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void setPointOfInterestNodes()
     {
-        for (TreeMap.Entry<String, PointOfInterest> entry : ParserPointOfInterest.Instance.pointOfInterests.entrySet())
+        for (TreeMap.Entry<String, PointOfInterest> entry : ParsePointOfInterest.Instance.pointOfInterests.entrySet())
         {
             try {
                 double latitude = Double.parseDouble(entry.getValue().getLatitude());
@@ -281,10 +282,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void setElectricalTerminalNodes()
     {
-        for (int i = 1; i < ParserElectricalTerminal.Instance.electricalTerminals.size(); i++) {
+        for (int i = 1; i < ParseElectricalTerminal.Instance.electricalTerminals.size(); i++) {
             try {
-                double latitude = Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude());
-                double longitude = Double.parseDouble(ParserElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude());
+                double latitude = Double.parseDouble(ParseElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude());
+                double longitude = Double.parseDouble(ParseElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude());
                 if (latitude < 90 && latitude > 40 && longitude < -60 && longitude > -80)
                         markersTerminal.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))

@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-public enum ParserPointOfInterest
+public enum ParsePointOfInterest
 {
     Instance;
 
