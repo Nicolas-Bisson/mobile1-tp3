@@ -1,13 +1,11 @@
-package com.example.hack;
+package com.example.mobile1_tp3;
 
 import android.content.res.Resources;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.TreeMap;
 
 public enum ParserPointOfInterest

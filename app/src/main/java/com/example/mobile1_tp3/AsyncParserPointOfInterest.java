@@ -1,14 +1,14 @@
-package com.example.hack;
+package com.example.mobile1_tp3;
 
 import android.os.AsyncTask;
 
 import java.io.InputStream;
 
-public class AsyncParserElectricalTerminal extends AsyncTask<InputStream, Void, Void>
+public class AsyncParserPointOfInterest extends AsyncTask<InputStream, Void, Void>
 {
     private final Listener listener;
 
-    public AsyncParserElectricalTerminal(Listener listener)
+    public AsyncParserPointOfInterest(Listener listener)
     {
         if(listener == null)
         {
@@ -20,7 +20,7 @@ public class AsyncParserElectricalTerminal extends AsyncTask<InputStream, Void, 
     @Override
     protected Void doInBackground(InputStream... inputStreams)
     {
-        ParserElectricalTerminal.Instance.Parse(inputStreams[0]);
+        ParserPointOfInterest.Instance.Parse(inputStreams[0], inputStreams[1]);
         return null;
     }
 
@@ -28,10 +28,10 @@ public class AsyncParserElectricalTerminal extends AsyncTask<InputStream, Void, 
     protected void onPostExecute(Void aVoid)
     {
         super.onPostExecute(aVoid);
-        listener.onParseElectricalTerminalComplete();
+        listener.onParsePointOfInterestComplete();
     }
 
     public interface Listener {
-        void onParseElectricalTerminalComplete();
+        void onParsePointOfInterestComplete();
     }
 }

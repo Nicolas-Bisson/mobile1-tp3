@@ -1,4 +1,4 @@
-package com.example.hack;
+package com.example.mobile1_tp3;
 
 import org.junit.Test;
 

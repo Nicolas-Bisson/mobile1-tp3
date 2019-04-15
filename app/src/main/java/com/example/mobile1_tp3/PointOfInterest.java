@@ -1,4 +1,4 @@
-package com.example.hack;
+package com.example.mobile1_tp3;
 
 public class PointOfInterest
 {
