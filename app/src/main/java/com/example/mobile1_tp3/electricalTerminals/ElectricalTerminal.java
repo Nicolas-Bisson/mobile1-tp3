@@ -2,23 +2,33 @@ package com.example.mobile1_tp3.electricalTerminals;
 
 public class ElectricalTerminal
 {
-    private String nameElectricalTerminal;
+    private Long id;
+    private String name;
     private String latitude;
     private String longitude;
 
-    public ElectricalTerminal(String nomBorne, String latitude, String longitude)
+    public ElectricalTerminal(Long id, String nomBorne, String latitude, String longitude)
     {
-        this.nameElectricalTerminal = nomBorne;
+        this.id = id;
+        this.name = nomBorne;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public String getNameElectricalTerminal()
+    public String getName()
     {
-        return nameElectricalTerminal;
+        return name;
     }
 
-    public void setNameElectricalTerminal(String nomBorne) { this.nameElectricalTerminal = nomBorne; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String nomBorne) { this.name = nomBorne; }
 
     public String getLatitude()
     {
