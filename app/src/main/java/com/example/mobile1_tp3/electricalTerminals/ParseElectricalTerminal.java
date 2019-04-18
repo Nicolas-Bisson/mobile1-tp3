@@ -45,7 +45,12 @@ public enum ParseElectricalTerminal
                     countForReplacements++;
                 }
                 String[] info = ligne.split("/");
-                terminalRepository.create(new ElectricalTerminal(info[0], Float.parseFloat(info[4]), Float.parseFloat(info[5])));
+                try {
+                    terminalRepository.create(new ElectricalTerminal(info[0], Double.parseDouble(info[4]), Double.parseDouble(info[5])));
+                }
+                catch (IllegalArgumentException ex) {
+                    ex.printStackTrace();
+                }
                 ligne = bufferedReader.readLine();
             }
 

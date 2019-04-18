@@ -60,8 +60,8 @@ public class ElectricalTerminalRepository implements Repository<ElectricalTermin
         try(Cursor cursor = database.rawQuery(ElectricalTerminalTable.SELECT_BY_ID, new String[]{String.valueOf(id)})) {
             if (cursor.moveToNext()) {
                 String name = cursor.getString(1);
-                float latitude = cursor.getFloat(2);
-                float longitude = cursor.getFloat(3);
+                Double latitude = cursor.getDouble(2);
+                Double longitude = cursor.getDouble(3);
 
                 electricalTerminal = new ElectricalTerminal(name, latitude, longitude);
             }
@@ -78,10 +78,9 @@ public class ElectricalTerminalRepository implements Repository<ElectricalTermin
 
         try(Cursor cursor = database.rawQuery(ElectricalTerminalTable.SELECT_ALL, new String[]{})) {
             while (cursor.moveToNext()) {
-                Long id = cursor.getLong(0);
                 String name = cursor.getString(1);
-                float latitude = cursor.getFloat(2);
-                float longitude = cursor.getFloat(3);
+                Double latitude = cursor.getDouble(2);
+                Double longitude = cursor.getDouble(3);
 
                 electricalTerminals.add(new ElectricalTerminal(name, latitude, longitude));
             }

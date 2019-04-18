@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.example.mobile1_tp3.database.DbConnectionFactory;
 import com.example.mobile1_tp3.database.ElectricalTerminalRepository;
 import com.example.mobile1_tp3.electricalTerminals.AsyncParseElectricalTerminal;
+import com.example.mobile1_tp3.electricalTerminals.ElectricalTerminal;
 import com.example.mobile1_tp3.electricalTerminals.ParseElectricalTerminal;
 import com.example.mobile1_tp3.pointsOfInterest.AsyncParsePointOfInterest;
 import com.example.mobile1_tp3.pointsOfInterest.ParsePointOfInterest;
@@ -326,10 +327,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void setElectricalTerminalNodes()
     {
-        for (long i = 1; i < terminalRepository.readAll().size(); i++) {
+        List<ElectricalTerminal> electricalTerminals = terminalRepository.readAll();
+        for (int i = 0; i < electricalTerminals.size(); i++) {
             try {
-                float latitude = terminalRepository.readById(i).getLatitude();
-                float longitude = terminalRepository.readById(i).getLongitude();
+                Double latitude = electricalTerminals.get(i).getLatitude();
+                Double longitude = electricalTerminals.get(i).getLongitude();
                 if (isInQuebec(latitude, longitude))
                         markersTerminal.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
