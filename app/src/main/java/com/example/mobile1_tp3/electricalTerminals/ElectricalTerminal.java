@@ -4,10 +4,10 @@ public class ElectricalTerminal
 {
     private Long id;
     private String name;
-    private String latitude;
-    private String longitude;
+    private Float latitude;
+    private Float longitude;
 
-    public ElectricalTerminal(Long id, String nomBorne, String latitude, String longitude)
+    public ElectricalTerminal(Long id, String nomBorne, Float latitude, Float longitude)
     {
         this.id = id;
         this.name = nomBorne;
@@ -30,22 +30,22 @@ public class ElectricalTerminal
 
     public void setName(String nomBorne) { this.name = nomBorne; }
 
-    public String getLatitude()
+    public Float getLatitude()
     {
         return latitude;
     }
 
-    public void setLatitude(String latitude)
+    public void setLatitude(Float latitude)
     {
         this.latitude = latitude;
     }
 
-    public String getLongitude()
+    public Float getLongitude()
     {
         return longitude;
     }
 
-    public void setLongitude(String longitude)
+    public void setLongitude(Float longitude)
     {
         this.longitude = longitude;
     }

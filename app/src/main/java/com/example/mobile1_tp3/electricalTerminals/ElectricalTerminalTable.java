@@ -25,6 +25,11 @@ public class ElectricalTerminalTable {
             "SELECT id, name, latitude, longitude\n" +
             "FROM electricalTerminals;";
 
+    public static final String SELECT_BY_ID = "" +
+            "SELECT id, name, latitude, longitude\n" +
+            "FROM electricalTerminals\n" +
+            "WHERE id = ?;";
+
     public static final String SELECT_BY_POSITION = "" +
             "SELECT id, name, latitude, longitude\n" +
             "FROM electricalTerminals\n" +

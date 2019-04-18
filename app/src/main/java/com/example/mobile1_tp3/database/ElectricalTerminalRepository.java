@@ -53,24 +53,24 @@ public class ElectricalTerminalRepository implements Repository<ElectricalTermin
 
     }
 
-//    @Override
-//    public ElectricalTerminal readById(Float minLatitude, Float maxLatitude) {
-//        ElectricalTerminal electricalTerminal = null;
-//
-//        try(Cursor cursor = database.rawQuery(ElectricalTerminalTable.SELECT_BY_ID, new String[]{String.valueOf(id)})) {
-//            if (cursor.moveToNext()) {
-//                String name = cursor.getString(1);
-//                float area = cursor.getFloat(2);
-//                int population = cursor.getInt(3);
-//
-//                electricalTerminal = new ElectricalTerminal(id, name, area, population);
-//            }
-//        } catch (Exception e) {
-//            throw new SQLException("Unable to read Country by id.", e);
-//        }
-//
-//        return electricalTerminal;
-//    }
+    @Override
+    public ElectricalTerminal readById(Long id) {
+        ElectricalTerminal electricalTerminal = null;
+
+        try(Cursor cursor = database.rawQuery(ElectricalTerminalTable.SELECT_BY_ID, new String[]{String.valueOf(id)})) {
+            if (cursor.moveToNext()) {
+                String name = cursor.getString(1);
+                float latitude = cursor.getFloat(2);
+                float longitude = cursor.getFloat(3);
+
+                electricalTerminal = new ElectricalTerminal(id, name, latitude, longitude);
+            }
+        } catch (Exception e) {
+            throw new SQLException("Unable to read Country by id.", e);
+        }
+
+        return electricalTerminal;
+    }
 
     @Override
     public List<ElectricalTerminal> readAll() {
@@ -83,7 +83,7 @@ public class ElectricalTerminalRepository implements Repository<ElectricalTermin
                 float latitude = cursor.getFloat(2);
                 float longitude = cursor.getFloat(3);
 
-                //electricalTerminals.add(new ElectricalTerminal(id, name, latitude, longitude));
+                electricalTerminals.add(new ElectricalTerminal(id, name, latitude, longitude));
             }
         } catch (Exception e) {
             e.printStackTrace();

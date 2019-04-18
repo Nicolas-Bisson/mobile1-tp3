@@ -46,7 +46,7 @@ public enum ParseElectricalTerminal
                     countForReplacements++;
                 }
                 String[] info = ligne.split("/");
-                electricalTerminals.add(new ElectricalTerminal(info[0], info[4],info[5]));
+                electricalTerminals.add(new ElectricalTerminal(Long.parseLong("1"), info[0], Float.parseFloat(info[4]), Float.parseFloat(info[5])));
                 ligne = bufferedReader.readLine();
             }
 

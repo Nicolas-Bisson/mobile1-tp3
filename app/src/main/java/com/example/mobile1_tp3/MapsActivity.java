@@ -320,8 +320,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     {
         for (int i = 1; i < ParseElectricalTerminal.Instance.electricalTerminals.size(); i++) {
             try {
-                double latitude = Double.parseDouble(ParseElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude());
-                double longitude = Double.parseDouble(ParseElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude());
+                float latitude = ParseElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude();
+                float longitude = ParseElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude();
                 if (isInQuebec(latitude, longitude))
                         markersTerminal.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
