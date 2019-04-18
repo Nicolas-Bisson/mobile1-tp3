@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -19,6 +20,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.mobile1_tp3.database.DbConnectionFactory;
+import com.example.mobile1_tp3.database.ElectricalTerminalRepository;
 import com.example.mobile1_tp3.electricalTerminals.AsyncParseElectricalTerminal;
 import com.example.mobile1_tp3.electricalTerminals.ParseElectricalTerminal;
 import com.example.mobile1_tp3.pointsOfInterest.AsyncParsePointOfInterest;
@@ -52,6 +55,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     public static final int MAX_INTEREST_RANGE = 5000;
 
+    private SQLiteDatabase terminalDatabase;
+    private ElectricalTerminalRepository terminalRepository;
     private FusedLocationProviderClient providerClient;
     private GoogleMap mMap;
     private boolean isTerminalSelected;
@@ -80,12 +85,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
+        DbConnectionFactory connectionFactory = new DbConnectionFactory(this);
+        terminalDatabase = connectionFactory.getWritableDatabase();
 
+        terminalRepository = new ElectricalTerminalRepository(terminalDatabase);
 
         try
         {
             final InputStream FILE_ELECTRICAL_TERMINAL = this.getResources().openRawResource(R.raw.bornes);
-            AsyncParseElectricalTerminal asyncParserElectricalTerminal = new AsyncParseElectricalTerminal(this);
+            AsyncParseElectricalTerminal asyncParserElectricalTerminal = new AsyncParseElectricalTerminal(this, terminalRepository);
             asyncParserElectricalTerminal.execute(FILE_ELECTRICAL_TERMINAL);
             final InputStream[] FILE_POINT_OF_INTEREST = new InputStream[]{this.getResources().openRawResource(R.raw.attraitsinfo),this.getResources().openRawResource(R.raw.attraitsadresse)};
             AsyncParsePointOfInterest asyncParsePointOfInterest = new AsyncParsePointOfInterest(this);
@@ -318,10 +326,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void setElectricalTerminalNodes()
     {
-        for (int i = 1; i < ParseElectricalTerminal.Instance.electricalTerminals.size(); i++) {
+        for (long i = 1; i < terminalRepository.readAll().size(); i++) {
             try {
-                float latitude = ParseElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude();
-                float longitude = ParseElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude();
+                float latitude = terminalRepository.readById(i).getLatitude();
+                float longitude = terminalRepository.readById(i).getLongitude();
                 if (isInQuebec(latitude, longitude))
                         markersTerminal.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))

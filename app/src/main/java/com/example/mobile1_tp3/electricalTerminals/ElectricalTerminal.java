@@ -7,9 +7,8 @@ public class ElectricalTerminal
     private Float latitude;
     private Float longitude;
 
-    public ElectricalTerminal(Long id, String nomBorne, Float latitude, Float longitude)
+    public ElectricalTerminal(String nomBorne, Float latitude, Float longitude)
     {
-        this.id = id;
         this.name = nomBorne;
         this.latitude = latitude;
         this.longitude = longitude;

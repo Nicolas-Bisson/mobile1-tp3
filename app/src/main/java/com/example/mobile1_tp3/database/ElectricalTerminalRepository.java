@@ -63,7 +63,7 @@ public class ElectricalTerminalRepository implements Repository<ElectricalTermin
                 float latitude = cursor.getFloat(2);
                 float longitude = cursor.getFloat(3);
 
-                electricalTerminal = new ElectricalTerminal(id, name, latitude, longitude);
+                electricalTerminal = new ElectricalTerminal(name, latitude, longitude);
             }
         } catch (Exception e) {
             throw new SQLException("Unable to read Country by id.", e);
@@ -83,7 +83,7 @@ public class ElectricalTerminalRepository implements Repository<ElectricalTermin
                 float latitude = cursor.getFloat(2);
                 float longitude = cursor.getFloat(3);
 
-                electricalTerminals.add(new ElectricalTerminal(id, name, latitude, longitude));
+                electricalTerminals.add(new ElectricalTerminal(name, latitude, longitude));
             }
         } catch (Exception e) {
             e.printStackTrace();

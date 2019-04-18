@@ -1,5 +1,7 @@
 package com.example.mobile1_tp3.electricalTerminals;
 
+import com.example.mobile1_tp3.database.ElectricalTerminalRepository;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -9,15 +11,12 @@ public enum ParseElectricalTerminal
 {
     Instance;
 
-    public ArrayList<ElectricalTerminal> electricalTerminals;
-
-    public void Parse(InputStream inputStream)
+    public void Parse(InputStream inputStream, ElectricalTerminalRepository terminalRepository)
     {
-        electricalTerminals = new ArrayList<>();
-        loadCSV(inputStream);
+        loadElectricalTerminalCSV(inputStream, terminalRepository);
         System.out.println("");
     }
-    private boolean loadCSV(InputStream inputStream)
+    private boolean loadElectricalTerminalCSV(InputStream inputStream, ElectricalTerminalRepository terminalRepository)
     {
         try
         {
@@ -46,7 +45,7 @@ public enum ParseElectricalTerminal
                     countForReplacements++;
                 }
                 String[] info = ligne.split("/");
-                electricalTerminals.add(new ElectricalTerminal(Long.parseLong("1"), info[0], Float.parseFloat(info[4]), Float.parseFloat(info[5])));
+                terminalRepository.create(new ElectricalTerminal(info[0], Float.parseFloat(info[4]), Float.parseFloat(info[5])));
                 ligne = bufferedReader.readLine();
             }
 
