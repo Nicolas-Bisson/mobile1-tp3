@@ -12,6 +12,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
@@ -26,6 +27,13 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.mobile1_tp3.database.DbConnectionFactory;
+import com.example.mobile1_tp3.database.ElectricalTerminalRepository;
+import com.example.mobile1_tp3.electricalTerminals.AsyncParseElectricalTerminal;
+import com.example.mobile1_tp3.electricalTerminals.ParseElectricalTerminal;
+import com.example.mobile1_tp3.pointsOfInterest.AsyncParsePointOfInterest;
+import com.example.mobile1_tp3.pointsOfInterest.ParsePointOfInterest;
+import com.example.mobile1_tp3.pointsOfInterest.PointOfInterest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -47,8 +55,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, AsyncParserElectricalTerminal.Listener,
-        AsyncParserPointOfInterest.Listener, GoogleMap.OnMarkerClickListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, AsyncParseElectricalTerminal.Listener,
+        AsyncParsePointOfInterest.Listener, GoogleMap.OnMarkerClickListener {
 
     public static final int MAX_TERMINAL_RANGE = 15000;
     private static final int INITIAL_ZOOM = 12;
@@ -56,6 +64,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static final int MAX_INTEREST_RANGE = 5000;
     private static final int LOCATION_PERMISSION_REQUEST = 1;
 
+    private SQLiteDatabase terminalDatabase;
+    private ElectricalTerminalRepository terminalRepository;
     private FusedLocationProviderClient providerClient;
     private GoogleMap mMap;
     private boolean isTerminalSelected;
@@ -88,15 +98,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
         rootView = findViewById(R.id.rootView);
+        DbConnectionFactory connectionFactory = new DbConnectionFactory(this);
+        terminalDatabase = connectionFactory.getWritableDatabase();
+
+        terminalRepository = new ElectricalTerminalRepository(terminalDatabase);
 
         try
         {
             final InputStream FILE_ELECTRICAL_TERMINAL = this.getResources().openRawResource(R.raw.bornes);
-            AsyncParserElectricalTerminal asyncParserElectricalTerminal = new AsyncParserElectricalTerminal(this);
+            AsyncParseElectricalTerminal asyncParserElectricalTerminal = new AsyncParseElectricalTerminal(this, terminalRepository);
             asyncParserElectricalTerminal.execute(FILE_ELECTRICAL_TERMINAL);
             final InputStream[] FILE_POINT_OF_INTEREST = new InputStream[]{this.getResources().openRawResource(R.raw.attraitsinfo),this.getResources().openRawResource(R.raw.attraitsadresse)};
-            AsyncParserPointOfInterest asyncParserPointOfInterest = new AsyncParserPointOfInterest(this);
-            asyncParserPointOfInterest.execute(FILE_POINT_OF_INTEREST);
+            AsyncParsePointOfInterest asyncParsePointOfInterest = new AsyncParsePointOfInterest(this);
+            asyncParsePointOfInterest.execute(FILE_POINT_OF_INTEREST);
         }
         catch (Exception e)
         {
@@ -367,10 +381,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void setElectricalTerminalNodes()
     {
-        for (int i = 1; i < ParseElectricalTerminal.Instance.electricalTerminals.size(); i++) {
+        for (long i = 1; i < terminalRepository.readAll().size(); i++) {
             try {
-                double latitude = Double.parseDouble(ParseElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude());
-                double longitude = Double.parseDouble(ParseElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude());
+                float latitude = terminalRepository.readById(i).getLatitude();
+                float longitude = terminalRepository.readById(i).getLongitude();
                 if (isInQuebec(latitude, longitude))
                         markersTerminal.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))

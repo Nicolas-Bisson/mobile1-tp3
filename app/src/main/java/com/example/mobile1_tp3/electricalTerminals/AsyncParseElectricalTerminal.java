@@ -1,26 +1,30 @@
-package com.example.mobile1_tp3;
+package com.example.mobile1_tp3.electricalTerminals;
 
 import android.os.AsyncTask;
 
+import com.example.mobile1_tp3.database.ElectricalTerminalRepository;
+
 import java.io.InputStream;
 
-public class AsyncParserElectricalTerminal extends AsyncTask<InputStream, Void, Void>
+public class AsyncParseElectricalTerminal extends AsyncTask<InputStream, Void, Void>
 {
     private final Listener listener;
+    ElectricalTerminalRepository terminalRepository;
 
-    public AsyncParserElectricalTerminal(Listener listener)
+    public AsyncParseElectricalTerminal(Listener listener, ElectricalTerminalRepository terminalRepository)
     {
         if(listener == null)
         {
             throw new IllegalArgumentException("listener doesn't exist");
         }
         this.listener = listener;
+        this.terminalRepository = terminalRepository;
     }
 
     @Override
     protected Void doInBackground(InputStream... inputStreams)
     {
-        ParseElectricalTerminal.Instance.Parse(inputStreams[0]);
+        ParseElectricalTerminal.Instance.Parse(inputStreams[0], terminalRepository);
         return null;
     }
 

@@ -1,14 +1,14 @@
-package com.example.mobile1_tp3;
+package com.example.mobile1_tp3.pointsOfInterest;
 
 import android.os.AsyncTask;
 
 import java.io.InputStream;
 
-public class AsyncParserPointOfInterest extends AsyncTask<InputStream, Void, Void>
+public class AsyncParsePointOfInterest extends AsyncTask<InputStream, Void, Void>
 {
     private final Listener listener;
 
-    public AsyncParserPointOfInterest(Listener listener)
+    public AsyncParsePointOfInterest(Listener listener)
     {
         if(listener == null)
         {

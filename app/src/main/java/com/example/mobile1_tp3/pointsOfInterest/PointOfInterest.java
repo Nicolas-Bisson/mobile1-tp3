@@ -1,4 +1,4 @@
-package com.example.mobile1_tp3;
+package com.example.mobile1_tp3.pointsOfInterest;
 
 public class PointOfInterest
 {
