@@ -19,6 +19,11 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.mobile1_tp3.electricalTerminals.AsyncParseElectricalTerminal;
+import com.example.mobile1_tp3.electricalTerminals.ParseElectricalTerminal;
+import com.example.mobile1_tp3.pointsOfInterest.AsyncParsePointOfInterest;
+import com.example.mobile1_tp3.pointsOfInterest.ParsePointOfInterest;
+import com.example.mobile1_tp3.pointsOfInterest.PointOfInterest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,8 +44,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, AsyncParserElectricalTerminal.Listener,
-        AsyncParserPointOfInterest.Listener, GoogleMap.OnMarkerClickListener {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, AsyncParseElectricalTerminal.Listener,
+        AsyncParsePointOfInterest.Listener, GoogleMap.OnMarkerClickListener {
 
     public static final int MAX_TERMINAL_RANGE = 15000;
     private static final int INITIAL_ZOOM = 12;
@@ -80,11 +85,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         try
         {
             final InputStream FILE_ELECTRICAL_TERMINAL = this.getResources().openRawResource(R.raw.bornes);
-            AsyncParserElectricalTerminal asyncParserElectricalTerminal = new AsyncParserElectricalTerminal(this);
+            AsyncParseElectricalTerminal asyncParserElectricalTerminal = new AsyncParseElectricalTerminal(this);
             asyncParserElectricalTerminal.execute(FILE_ELECTRICAL_TERMINAL);
             final InputStream[] FILE_POINT_OF_INTEREST = new InputStream[]{this.getResources().openRawResource(R.raw.attraitsinfo),this.getResources().openRawResource(R.raw.attraitsadresse)};
-            AsyncParserPointOfInterest asyncParserPointOfInterest = new AsyncParserPointOfInterest(this);
-            asyncParserPointOfInterest.execute(FILE_POINT_OF_INTEREST);
+            AsyncParsePointOfInterest asyncParsePointOfInterest = new AsyncParsePointOfInterest(this);
+            asyncParsePointOfInterest.execute(FILE_POINT_OF_INTEREST);
         }
         catch (Exception e)
         {

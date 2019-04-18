@@ -1,4 +1,4 @@
-package com.example.mobile1_tp3;
+package com.example.mobile1_tp3.electricalTerminals;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

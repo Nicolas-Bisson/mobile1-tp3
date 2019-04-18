@@ -1,14 +1,14 @@
-package com.example.mobile1_tp3;
+package com.example.mobile1_tp3.electricalTerminals;
 
 import android.os.AsyncTask;
 
 import java.io.InputStream;
 
-public class AsyncParserElectricalTerminal extends AsyncTask<InputStream, Void, Void>
+public class AsyncParseElectricalTerminal extends AsyncTask<InputStream, Void, Void>
 {
     private final Listener listener;
 
-    public AsyncParserElectricalTerminal(Listener listener)
+    public AsyncParseElectricalTerminal(Listener listener)
     {
         if(listener == null)
         {

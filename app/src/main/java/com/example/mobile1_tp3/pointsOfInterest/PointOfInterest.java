@@ -1,24 +1,32 @@
-package com.example.mobile1_tp3;
+package com.example.mobile1_tp3.pointsOfInterest;
 
-public class ElectricalTerminal
+public class PointOfInterest
 {
-    private String nameElectricalTerminal;
+    private String nomAttrait;
     private String latitude;
     private String longitude;
 
-    public ElectricalTerminal(String nomBorne, String latitude, String longitude)
+    public PointOfInterest(String nomAttrait, String latitude, String longitude)
     {
-        this.nameElectricalTerminal = nomBorne;
+        this.nomAttrait = nomAttrait;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public String getNameElectricalTerminal()
+    public PointOfInterest(String nomAttrait)
     {
-        return nameElectricalTerminal;
+        this.nomAttrait = nomAttrait;
     }
 
-    public void setNameElectricalTerminal(String nomBorne) { this.nameElectricalTerminal = nomBorne; }
+    public String getNomAttrait()
+    {
+        return nomAttrait;
+    }
+
+    public void setNomAttrait(String nomAttrait)
+    {
+        this.nomAttrait = nomAttrait;
+    }
 
     public String getLatitude()
     {
@@ -39,6 +47,5 @@ public class ElectricalTerminal
     {
         this.longitude = longitude;
     }
-
 }
 
