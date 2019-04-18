@@ -42,14 +42,13 @@ import java.util.TreeMap;
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, AsyncParserElectricalTerminal.Listener,
         AsyncParserPointOfInterest.Listener, GoogleMap.OnMarkerClickListener {
 
+    public static final int MAX_TERMINAL_RANGE = 15000;
     private static final int INITIAL_ZOOM = 12;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
+    public static final int MAX_INTEREST_RANGE = 5000;
 
     private FusedLocationProviderClient providerClient;
     private GoogleMap mMap;
-
-    private int distanceCheckTerminal;
-    private int distanceCheckInterest;
     private boolean isTerminalSelected;
     private int indexTerminal;
 
@@ -103,9 +102,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         searchText = (EditText) findViewById(R.id.searchText);
-
-        distanceCheckTerminal = 15000;
-        distanceCheckInterest = 5000;
         isTerminalSelected = false;
         indexTerminal = 0;
     }
@@ -228,8 +224,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onCameraIdle()
             {
-                    distanceCheckInterest = 5000;
-
                     for (int i = 0; i < markersTerminal.size(); i++)
                     {
                         if (!isMarkerTerminalClose(i))
@@ -272,7 +266,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             {
                 isTerminalSelected = true;
                 indexTerminal = i;
-                distanceCheckInterest = 5000;
 
                 for (int j = 0; j < markersInterest.size(); j++)
                 {
@@ -298,7 +291,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             try {
                 double latitude = Double.parseDouble(entry.getValue().getLatitude());
                 double longitude = Double.parseDouble(entry.getValue().getLongitude());
-                if (latitude < 90 && latitude > 40 && longitude < -60 && longitude > -80)
+                if (isInQuebec(latitude, longitude))
                     markersInterest.add(mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(latitude, longitude))
                             .title(entry.getValue().getNomAttrait())
@@ -324,7 +317,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             try {
                 double latitude = Double.parseDouble(ParseElectricalTerminal.Instance.electricalTerminals.get(i).getLatitude());
                 double longitude = Double.parseDouble(ParseElectricalTerminal.Instance.electricalTerminals.get(i).getLongitude());
-                if (latitude < 90 && latitude > 40 && longitude < -60 && longitude > -80)
+                if (isInQuebec(latitude, longitude))
                         markersTerminal.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
                         .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_electrical_terminal))));
@@ -336,9 +329,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private boolean isInQuebec(double latitude, double longitude) {
+        return latitude < 90 && latitude > 40 && longitude < -60 && longitude > -80;
+    }
+
     public boolean isMarkerTerminalClose(int index)
     {
-        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target, markersTerminal.get(index).getPosition()) < 5000);
+        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target, markersTerminal.get(index).getPosition()) < MAX_TERMINAL_RANGE);
     }
 
     public boolean isMarkerInterestClose(int index, int indexTerminal)
@@ -346,12 +343,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(indexTerminal <= -1)
         {
             return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
-                    new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < distanceCheckInterest);
+                    new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < MAX_INTEREST_RANGE);
         }
         else
         {
             return (SphericalUtil.computeDistanceBetween(markersTerminal.get(indexTerminal).getPosition(),
-                    new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < distanceCheckInterest);
+                    new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < MAX_INTEREST_RANGE);
         }
     }
 
