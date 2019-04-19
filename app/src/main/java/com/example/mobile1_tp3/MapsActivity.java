@@ -187,9 +187,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             Location deviceCurrentLocation = taskGetLocation.getResult();
 
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
-                                    deviceCurrentLocation.getLatitude(),
-                                    deviceCurrentLocation.getLongitude()), INITIAL_ZOOM));
+                            if (deviceCurrentLocation != null)
+                            {
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+                                        deviceCurrentLocation.getLatitude(),
+                                        deviceCurrentLocation.getLongitude()), INITIAL_ZOOM));
+                            }else{
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
+                            }
+
                         } else {
                             //indiquer à l'utilisateur que la position n'a pas pu être trouvé
                         }
@@ -268,8 +274,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         askForLocationPermission();
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
-        //moveCameraToDevicePosition();
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
+        moveCameraToDevicePosition();
 
         initSearch();
         for (int i = 0; i < markersInterest.size(); i++)
