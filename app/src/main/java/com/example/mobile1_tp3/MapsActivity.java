@@ -4,13 +4,20 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.KeyEvent;
@@ -40,6 +47,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.maps.android.SphericalUtil;
 
 import java.io.IOException;
@@ -55,6 +63,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int INITIAL_ZOOM = 12;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     public static final int MAX_INTEREST_RANGE = 5000;
+    private static final int LOCATION_PERMISSION_REQUEST = 1;
 
     private SQLiteDatabase terminalDatabase;
     private ElectricalTerminalRepository terminalRepository;
@@ -69,6 +78,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<Marker> markersInterest;
     private ProgressBar progressBar;
     private DrawerLayout drawerLayout;
+    private View rootView;
+
+    private boolean isPermissionGranted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +98,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
+        rootView = findViewById(R.id.rootView);
         DbConnectionFactory connectionFactory = new DbConnectionFactory(this);
         terminalDatabase = connectionFactory.getWritableDatabase();
 
@@ -120,33 +133,78 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         indexTerminal = 0;
     }
 
+    private void askForLocationPermission() {
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+
+                Snackbar.make(rootView, "Votre position ne sera pas pris en compte," +
+                        " elle sera automatiquement réglé sur Québec" ,Snackbar.LENGTH_LONG).show();
+
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        LOCATION_PERMISSION_REQUEST);
+            }
+        }
+        Snackbar.make(rootView, "Permission de Localisation activé" ,Snackbar.LENGTH_LONG).show();
+        isPermissionGranted = true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[],
+                                           int[] grantResults) {
+
+        isPermissionGranted = false;
+
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUEST: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    isPermissionGranted = true;
+                } else {
+                    //Permission refusée. Expliquer à l'utilisateur pourquoi c'est important.
+                }
+                return;
+            }
+        }
+    }
+
     private void moveCameraToDevicePosition(){
 
         providerClient = LocationServices.getFusedLocationProviderClient(this);
 
         try {
-            final Task location = providerClient.getLastLocation();
-            location.addOnCompleteListener(new OnCompleteListener() {
-                @Override
-                public void onComplete(@NonNull Task task) {
-                    if (task.isSuccessful()) {
+            if (isPermissionGranted) {
 
-                        Location currentLocation = (Location) task.getResult();
+                final Task<Location> deviceLocation = providerClient.getLastLocation();
+                deviceLocation.addOnCompleteListener(this, new OnCompleteListener<Location>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Location> taskGetLocation) {
+                        if (taskGetLocation.isSuccessful() && taskGetLocation.isComplete()) {
 
-//                        LatLng currentLatLng = new LatLng(
-//                                currentLocation.getLatitude(),
-//                                currentLocation.getLongitude());
+                            Location deviceCurrentLocation = taskGetLocation.getResult();
 
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
+                            if (deviceCurrentLocation != null)
+                            {
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+                                        deviceCurrentLocation.getLatitude(),
+                                        deviceCurrentLocation.getLongitude()), INITIAL_ZOOM));
+                            }else{
+                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
+                            }
+
+                        } else {
+                            //indiquer à l'utilisateur que la position n'a pas pu être trouvé
+                        }
                     }
-                    else {
-                        //indiquer à l'utilisateur que la position n'a pas pu être trouvé
-                    }
-                }
-            });
-
+                });
+            }
         }catch (SecurityException e){
-
+            //TODO
         }
     }
 
@@ -176,6 +234,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
+    //Set the camera on the searched city
     private void geoLocate()
     {
         isTerminalSelected = false;
@@ -215,7 +274,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
+        askForLocationPermission();
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
+        moveCameraToDevicePosition();
 
         initSearch();
         for (int i = 0; i < markersInterest.size(); i++)
