@@ -2,6 +2,8 @@ package com.example.mobile1_tp3.pointsOfInterest;
 
 import android.content.res.Resources;
 
+import com.example.mobile1_tp3.database.PointOfInterestRepository;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,13 +14,16 @@ public enum ParsePointOfInterest
 {
     Instance;
 
-    public TreeMap<String, PointOfInterest> pointOfInterests;
+    private TreeMap<String, PointOfInterest> pointOfInterests;
+    private PointOfInterestRepository pointOfInterestRepository;
 
-    public void Parse(InputStream inputStreamInfo, InputStream inputStreamAddress)
+    public void Parse(InputStream inputStreamInfo, InputStream inputStreamAddress, PointOfInterestRepository pointOfInterestRepository)
     {
+        this.pointOfInterestRepository = pointOfInterestRepository;
         pointOfInterests = new TreeMap<>();
         chargerCSVInfo(inputStreamInfo);
         chargerCSVAdresse(inputStreamAddress);
+        pointOfInterests.clear();
         System.out.println("");
     }
     private boolean chargerCSVInfo(InputStream inputStreamInfo)
@@ -81,8 +86,16 @@ public enum ParsePointOfInterest
                 {
                     if(info.length >= 15)
                     {
-                        pointOfInterests.get(info[0]).setLatitude(info[14]);
-                        pointOfInterests.get(info[0]).setLongitude(info[15]);
+                        try {
+                            pointOfInterestRepository.create(new PointOfInterest(
+                                    pointOfInterests.get(info[0]).getName(),
+                                    Double.parseDouble(info[14]),
+                                    Double.parseDouble(info[15])));
+                        }
+                        catch (NumberFormatException ex) {
+                            //ex.printStackTrace();
+                        }
+
                     }
                 }
                 ligne = bufferedReader.readLine();

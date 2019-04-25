@@ -1,17 +1,17 @@
-package com.example.mobile1_tp3.electricalTerminals;
+package com.example.mobile1_tp3.pointsOfInterest;
 
-public class ElectricalTerminalTable {
+public class PointOfInterestTable {
 
     public static final String CREATE = "" +
-            "CREATE TABLE IF NOT EXISTS electricalTerminals (\n" +
+            "CREATE TABLE IF NOT EXISTS pointsOfInterest (\n" +
             "    id         INTEGER     PRIMARY KEY     AUTOINCREMENT,\n" +
-            "    name       VARCHAR(10),\n" +
+            "    name       VARCHAR(30),\n" +
             "    latitude   REAL,\n" +
             "    longitude  REAL\n" +
             ");";
 
     public static final String INSERT = "" +
-            "INSERT INTO electricalTerminals (\n" +
+            "INSERT INTO pointsOfInterest (\n" +
             "    name,\n" +
             "    latitude,\n" +
             "    longitude\n" +
@@ -23,20 +23,20 @@ public class ElectricalTerminalTable {
 
     public static final String SELECT_ALL = "" +
             "SELECT id, name, latitude, longitude\n" +
-            "FROM electricalTerminals;";
+            "FROM pointsOfInterest;";
 
     public static final String SELECT_BY_ID = "" +
             "SELECT id, name, latitude, longitude\n" +
-            "FROM electricalTerminals\n" +
+            "FROM pointsOfInterest\n" +
             "WHERE id = ?;";
 
     public static final String SELECT_BY_POSITION = "" +
             "SELECT id, name, latitude, longitude\n" +
-            "FROM electricalTerminals\n" +
+            "FROM pointsOfInterest\n" +
             "WHERE (latitude BETWEEN ? AND ?) AND (longitude BETWEEN ? AND ?);";
 
     public static final  String UPDATE = "" +
-            "UPDATE electricalTerminals\n" +
+            "UPDATE pointsOfInterest\n" +
             "SET \n" +
             "    name = ?,\n" +
             "    latitude = ?,\n" +
@@ -45,13 +45,13 @@ public class ElectricalTerminalTable {
             "    id = ?;";
 
     public static final String DELETE = "" +
-            "DELETE FROM electricalTerminals\n" +
+            "DELETE FROM pointsOfInterest\n" +
             "WHERE id = ?;";
 
     public static final String DROP = "" +
-            "DROP TABLE IF EXISTS electricalTerminals";
+            "DROP TABLE IF EXISTS pointsOfInterest";
 
-    private ElectricalTerminalTable() {
+    private PointOfInterestTable() {
         //Private for static class
     }
 }

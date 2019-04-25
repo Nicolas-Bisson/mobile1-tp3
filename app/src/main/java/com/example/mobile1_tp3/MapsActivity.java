@@ -10,14 +10,11 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
-import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.KeyEvent;
@@ -29,11 +26,10 @@ import android.widget.TextView;
 
 import com.example.mobile1_tp3.database.DbConnectionFactory;
 import com.example.mobile1_tp3.database.ElectricalTerminalRepository;
+import com.example.mobile1_tp3.database.PointOfInterestRepository;
 import com.example.mobile1_tp3.electricalTerminals.AsyncParseElectricalTerminal;
 import com.example.mobile1_tp3.electricalTerminals.ElectricalTerminal;
-import com.example.mobile1_tp3.electricalTerminals.ParseElectricalTerminal;
 import com.example.mobile1_tp3.pointsOfInterest.AsyncParsePointOfInterest;
-import com.example.mobile1_tp3.pointsOfInterest.ParsePointOfInterest;
 import com.example.mobile1_tp3.pointsOfInterest.PointOfInterest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -54,7 +50,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, AsyncParseElectricalTerminal.Listener,
         AsyncParsePointOfInterest.Listener, GoogleMap.OnMarkerClickListener {
@@ -62,11 +57,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static final int MAX_TERMINAL_RANGE = 15000;
     private static final int INITIAL_ZOOM = 12;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
-    public static final int MAX_INTEREST_RANGE = 5000;
     private static final int LOCATION_PERMISSION_REQUEST = 1;
 
-    private SQLiteDatabase terminalDatabase;
+    private SQLiteDatabase Database;
     private ElectricalTerminalRepository terminalRepository;
+    private PointOfInterestRepository pointOfInterestRepository;
     private FusedLocationProviderClient providerClient;
     private GoogleMap mMap;
     private boolean isTerminalSelected;
@@ -100,9 +95,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         rootView = findViewById(R.id.rootView);
         DbConnectionFactory connectionFactory = new DbConnectionFactory(this);
-        terminalDatabase = connectionFactory.getWritableDatabase();
+        Database = connectionFactory.getWritableDatabase();
 
-        terminalRepository = new ElectricalTerminalRepository(terminalDatabase);
+        terminalRepository = new ElectricalTerminalRepository(Database);
+        pointOfInterestRepository = new PointOfInterestRepository(Database);
 
         try
         {
@@ -110,7 +106,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             AsyncParseElectricalTerminal asyncParserElectricalTerminal = new AsyncParseElectricalTerminal(this, terminalRepository);
             asyncParserElectricalTerminal.execute(FILE_ELECTRICAL_TERMINAL);
             final InputStream[] FILE_POINT_OF_INTEREST = new InputStream[]{this.getResources().openRawResource(R.raw.attraitsinfo),this.getResources().openRawResource(R.raw.attraitsadresse)};
-            AsyncParsePointOfInterest asyncParsePointOfInterest = new AsyncParsePointOfInterest(this);
+            AsyncParsePointOfInterest asyncParsePointOfInterest = new AsyncParsePointOfInterest(this, pointOfInterestRepository);
             asyncParsePointOfInterest.execute(FILE_POINT_OF_INTEREST);
         }
         catch (Exception e)
@@ -275,7 +271,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         askForLocationPermission();
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
         moveCameraToDevicePosition();
 
         initSearch();
@@ -299,37 +294,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onCameraIdle()
             {
-                    for (int i = 0; i < markersTerminal.size(); i++)
-                    {
-                        if (!isMarkerTerminalClose(i))
-                        {
-                            markersTerminal.get(i).setVisible(false);
-                        }
-                        else
-                        {
-                            markersTerminal.get(i).setVisible(true);
-                        }
-
-                    }
-
-                if(isTerminalSelected)
+                if(!isTerminalSelected)
                 {
-                    for (int i = 0; i < markersTerminal.size(); i++)
-                    {
-                        if(i == indexTerminal)
-                        {
-                            for (int j = 0; j < markersInterest.size(); j++)
-                            {
-                                if(isMarkerInterestClose(j, indexTerminal))
-                                {
-                                    markersInterest.get(j).setVisible(true);
-                                }
-                            }
-                        }
+                    setElectricalTerminalNodes();
+                    if (markersInterest.size() > 0) {
+                        deleteAllInterestMarker();
                     }
                 }
             }
         });
+    }
+
+    private void deleteAllInterestMarker() {
+        for (int i = markersInterest.size()-1; i >= 0; i--) {
+            markersInterest.get(i).remove();
+        }
     }
 
     public boolean onMarkerClick(final Marker marker)
@@ -342,17 +321,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 isTerminalSelected = true;
                 indexTerminal = i;
 
-                for (int j = 0; j < markersInterest.size(); j++)
-                {
-                    if (isMarkerInterestClose(j, indexTerminal))
-                    {
-                        markersInterest.get(j).setVisible(true);
-                    }
-                    else
-                    {
-                        markersInterest.get(j).setVisible(false);
-                    }
-                }
+                setPointOfInterestNodes();
                 return true;
             }
         }
@@ -361,40 +330,39 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void setPointOfInterestNodes()
     {
-        for (TreeMap.Entry<String, PointOfInterest> entry : ParsePointOfInterest.Instance.pointOfInterests.entrySet())
-        {
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getCurrentPosition(), mMap.getCameraPosition().zoom));
+        deleteAllInterestMarker();
+        List<PointOfInterest> pointOfInterests = pointOfInterestRepository.readByPosition(getCurrentPosition());
+        for (int i = 0; i < pointOfInterests.size(); i++) {
             try {
-                double latitude = Double.parseDouble(entry.getValue().getLatitude());
-                double longitude = Double.parseDouble(entry.getValue().getLongitude());
-                if (isInQuebec(latitude, longitude))
-                    markersInterest.add(mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(latitude, longitude))
-                            .title(entry.getValue().getNomAttrait())
-                            .visible(false)
-                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))));
+                Double latitude = pointOfInterests.get(i).getLatitude();
+                Double longitude = pointOfInterests.get(i).getLongitude();
+                markersInterest.add(mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(latitude, longitude))
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))));
             }
             catch (NumberFormatException e)
             {
                 System.out.println(e.toString());
             }
-            catch (NullPointerException e)
-            {
-                System.out.println(e.toString());
-            }
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude), mMap.getCameraPosition().zoom));
-        progressBar.setVisibility(View.GONE);
+    }
+
+    private LatLng getCurrentPosition() {
+        return new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude);
     }
 
     private void setElectricalTerminalNodes()
     {
-        List<ElectricalTerminal> electricalTerminals = terminalRepository.readAll();
+        for (int i = markersTerminal.size()-1; i >= 0; i--) {
+            markersTerminal.get(i).remove();
+        }
+        List<ElectricalTerminal> electricalTerminals = terminalRepository.readByPosition(getCurrentPosition());
         for (int i = 0; i < electricalTerminals.size(); i++) {
             try {
                 Double latitude = electricalTerminals.get(i).getLatitude();
                 Double longitude = electricalTerminals.get(i).getLongitude();
-                if (isInQuebec(latitude, longitude))
-                        markersTerminal.add(mMap.addMarker(new MarkerOptions()
+                markersTerminal.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
                         .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_electrical_terminal))));
             }
@@ -404,30 +372,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
-
-    private boolean isInQuebec(double latitude, double longitude) {
-        return latitude < 90 && latitude > 40 && longitude < -60 && longitude > -80;
-    }
-
-    public boolean isMarkerTerminalClose(int index)
-    {
-        return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target, markersTerminal.get(index).getPosition()) < MAX_TERMINAL_RANGE);
-    }
-
-    public boolean isMarkerInterestClose(int index, int indexTerminal)
-    {
-        if(indexTerminal <= -1)
-        {
-            return (SphericalUtil.computeDistanceBetween(mMap.getCameraPosition().target,
-                    new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < MAX_INTEREST_RANGE);
-        }
-        else
-        {
-            return (SphericalUtil.computeDistanceBetween(markersTerminal.get(indexTerminal).getPosition(),
-                    new LatLng(markersInterest.get(index).getPosition().latitude, markersInterest.get(index).getPosition().longitude)) < MAX_INTEREST_RANGE);
-        }
-    }
-
     @Override
     public void onParseElectricalTerminalComplete()
     {

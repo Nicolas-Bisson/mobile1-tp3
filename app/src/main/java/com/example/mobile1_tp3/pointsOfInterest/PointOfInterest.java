@@ -2,48 +2,57 @@ package com.example.mobile1_tp3.pointsOfInterest;
 
 public class PointOfInterest
 {
-    private String nomAttrait;
-    private String latitude;
-    private String longitude;
+    private Long id;
+    private String name;
+    private Double latitude;
+    private Double longitude;
 
-    public PointOfInterest(String nomAttrait, String latitude, String longitude)
+    public PointOfInterest(String name, Double latitude, Double longitude)
     {
-        this.nomAttrait = nomAttrait;
+        this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public PointOfInterest(String nomAttrait)
-    {
-        this.nomAttrait = nomAttrait;
+    public Long getId() {
+        return id;
     }
 
-    public String getNomAttrait()
-    {
-        return nomAttrait;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setNomAttrait(String nomAttrait)
+    public PointOfInterest(String name)
     {
-        this.nomAttrait = nomAttrait;
+        this.name = name;
     }
 
-    public String getLatitude()
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public Double getLatitude()
     {
         return latitude;
     }
 
-    public void setLatitude(String latitude)
+    public void setLatitude(Double latitude)
     {
         this.latitude = latitude;
     }
 
-    public String getLongitude()
+    public Double getLongitude()
     {
         return longitude;
     }
 
-    public void setLongitude(String longitude)
+    public void setLongitude(Double longitude)
     {
         this.longitude = longitude;
     }
