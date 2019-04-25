@@ -7,9 +7,9 @@ public class ElectricalTerminal
     private Double latitude;
     private Double longitude;
 
-    public ElectricalTerminal(String nomBorne, Double latitude, Double longitude)
+    public ElectricalTerminal(String name, Double latitude, Double longitude)
     {
-        this.name = nomBorne;
+        this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
     }

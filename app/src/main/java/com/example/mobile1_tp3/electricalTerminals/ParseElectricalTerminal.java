@@ -48,8 +48,8 @@ public enum ParseElectricalTerminal
                 try {
                     terminalRepository.create(new ElectricalTerminal(info[0], Double.parseDouble(info[4]), Double.parseDouble(info[5])));
                 }
-                catch (IllegalArgumentException ex) {
-                    ex.printStackTrace();
+                catch (NumberFormatException ex) {
+                    //ex.printStackTrace();
                 }
                 ligne = bufferedReader.readLine();
             }

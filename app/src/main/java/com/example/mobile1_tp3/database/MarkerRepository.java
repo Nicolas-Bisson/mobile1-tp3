@@ -1,14 +1,20 @@
 package com.example.mobile1_tp3.database;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.List;
 
-public interface Repository<T> {
+public interface MarkerRepository<T> {
+
+    double detectionRange = 0.05;
 
     void create(T item);
 
     T readById(Long id);
 
     List<T> readAll();
+
+    List<T> readByPosition(LatLng currentPosition);
 
     void update(T item);
 
