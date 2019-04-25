@@ -133,23 +133,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         indexTerminal = 0;
     }
 
-    private void askForLocationPermission() {
+    private void askForDeviceLocationPermission() {
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                 Snackbar.make(rootView, "Votre position ne sera pas pris en compte," +
                         " elle sera automatiquement réglé sur Québec" ,Snackbar.LENGTH_LONG).show();
 
             } else {
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         LOCATION_PERMISSION_REQUEST);
             }
         }
-        Snackbar.make(rootView, "Permission de Localisation activé" ,Snackbar.LENGTH_LONG).show();
+        Snackbar.make(rootView, "Permission de localisation activé" ,Snackbar.LENGTH_LONG).show();
         isPermissionGranted = true;
     }
 
@@ -202,6 +202,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     }
                 });
+            }
+            else
+            {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
             }
         }catch (SecurityException e){
             //TODO
@@ -274,7 +278,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        askForLocationPermission();
+        askForDeviceLocationPermission();
         //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
         moveCameraToDevicePosition();
 
