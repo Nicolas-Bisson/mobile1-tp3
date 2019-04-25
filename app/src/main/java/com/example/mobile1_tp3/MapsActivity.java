@@ -10,15 +10,16 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
-import android.content.Context;
+import android.app.PendingIntent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
-import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -36,6 +37,9 @@ import com.example.mobile1_tp3.pointsOfInterest.AsyncParsePointOfInterest;
 import com.example.mobile1_tp3.pointsOfInterest.ParsePointOfInterest;
 import com.example.mobile1_tp3.pointsOfInterest.PointOfInterest;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -140,8 +144,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-                Snackbar.make(rootView, "Votre position ne sera pas pris en compte," +
-                        " elle sera automatiquement réglé sur Québec" ,Snackbar.LENGTH_LONG).show();
+                Snackbar.make(rootView, getString(R.string.refused_Location_Permission_Message) ,Snackbar.LENGTH_LONG).show();
 
             } else {
                 ActivityCompat.requestPermissions(this,
@@ -149,7 +152,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         LOCATION_PERMISSION_REQUEST);
             }
         }
-        Snackbar.make(rootView, "Permission de localisation activé" ,Snackbar.LENGTH_LONG).show();
+        Snackbar.make(rootView, getString(R.string.Accepted_Location_Permission_Message) ,Snackbar.LENGTH_LONG).show();
         isPermissionGranted = true;
     }
 
@@ -157,13 +160,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[],
                                            int[] grantResults) {
-
         isPermissionGranted = false;
 
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
                     isPermissionGranted = true;
                 } else {
                     //Permission refusée. Expliquer à l'utilisateur pourquoi c'est important.
@@ -173,12 +175,33 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    LocationCallback mLocationCallback = new LocationCallback() {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            List<Location> locationList = locationResult.getLocations();
+            if (locationList.size() > 0) {
+                //The last location in the list is the newest
+                Location location = locationList.get(locationList.size() - 1);
+                Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
+                Location mLastLocation = location;
+            }
+        }
+    };
+
+
     private void moveCameraToDevicePosition(){
 
         providerClient = LocationServices.getFusedLocationProviderClient(this);
 
         try {
             if (isPermissionGranted) {
+
+                LocationRequest locationRequest = new LocationRequest();
+                locationRequest.setInterval(120000); // two minute interval
+                locationRequest.setFastestInterval(120000);
+                locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+
+                providerClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.myLooper());
 
                 final Task<Location> deviceLocation = providerClient.getLastLocation();
                 deviceLocation.addOnCompleteListener(this, new OnCompleteListener<Location>() {

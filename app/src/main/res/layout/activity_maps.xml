@@ -74,7 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/map"
-            android:layout_alignTop="@+id/searchBar_"
+            android:layout_alignTop="@+id/searchBar"
             android:layout_alignEnd="@+id/map"
             android:layout_alignBottom="@+id/map"
             android:layout_marginStart="182dp"

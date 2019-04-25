@@ -3,7 +3,9 @@
     <string name="nav_header">Legend</string>
     <string name="terminal">Electric terminal</string>
     <string name="interest">Point of interest</string>
-    <string name="app_name">La Pause Électrique</string>
+    <string name="app_name">The Electrical Break</string>
     <string name="title_activity_maps">Map</string>
     <string name="enter_city_name">Enter city name</string>
+    <string name="refused_Location_Permission_Message">Votre position ne sera pas pris en compte,elle sera automatiquement réglé sur Québec</string>
+    <string name="Accepted_Location_Permission_Message">Permission de localisation activé</string>
 </resources>
