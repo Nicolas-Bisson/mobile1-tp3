@@ -7,4 +7,7 @@
     <string name="app_name">La Pause Électrique</string>
     <string name="title_activity_maps">Carte</string>
     <string name="enter_city_name">Entrer une ville</string>
+
+    <string name="refused_Location_Permission_Message">Your position will not be taken into account, it will be automatically set on Quebec City</string>
+    <string name="Accepted_Location_Permission_Message">Localisation permission already granted</string>
 </resources>
