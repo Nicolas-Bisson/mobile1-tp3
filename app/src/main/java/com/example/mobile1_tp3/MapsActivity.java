@@ -39,6 +39,9 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -48,6 +51,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.maps.android.SphericalUtil;
@@ -83,6 +87,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private boolean isPermissionGranted = false;
 
+
+    LocationCallback locationCallback;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,17 +113,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         terminalRepository = new ElectricalTerminalRepository(Database);
         pointOfInterestRepository = new PointOfInterestRepository(Database);
 
-        try
-        {
+        try {
             final InputStream FILE_ELECTRICAL_TERMINAL = this.getResources().openRawResource(R.raw.bornes);
             AsyncParseElectricalTerminal asyncParserElectricalTerminal = new AsyncParseElectricalTerminal(this, terminalRepository);
             asyncParserElectricalTerminal.execute(FILE_ELECTRICAL_TERMINAL);
-            final InputStream[] FILE_POINT_OF_INTEREST = new InputStream[]{this.getResources().openRawResource(R.raw.attraitsinfo),this.getResources().openRawResource(R.raw.attraitsadresse)};
+            final InputStream[] FILE_POINT_OF_INTEREST = new InputStream[]{this.getResources().openRawResource(R.raw.attraitsinfo), this.getResources().openRawResource(R.raw.attraitsadresse)};
             AsyncParsePointOfInterest asyncParsePointOfInterest = new AsyncParsePointOfInterest(this, pointOfInterestRepository);
             asyncParsePointOfInterest.execute(FILE_POINT_OF_INTEREST);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.println(e.toString());
         }
 
@@ -133,6 +137,22 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         searchText = (EditText) findViewById(R.id.searchText);
         isTerminalSelected = false;
         indexTerminal = 0;
+
+        providerClient = LocationServices.getFusedLocationProviderClient(this);
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+                            location.getLatitude(),
+                            location.getLongitude()), INITIAL_ZOOM));
+                }
+            }
+        };
     }
 
     private void askForDeviceLocationPermission() {
@@ -142,7 +162,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-                Snackbar.make(rootView, getString(R.string.refused_Location_Permission_Message) ,Snackbar.LENGTH_LONG).show();
+                Snackbar.make(rootView, getString(R.string.refused_Location_Permission_Message), Snackbar.LENGTH_LONG).show();
 
             } else {
                 ActivityCompat.requestPermissions(this,
@@ -150,7 +170,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         LOCATION_PERMISSION_REQUEST);
             }
         }
-        Snackbar.make(rootView, getString(R.string.Accepted_Location_Permission_Message) ,Snackbar.LENGTH_LONG).show();
+        Snackbar.make(rootView, getString(R.string.Accepted_Location_Permission_Message), Snackbar.LENGTH_LONG).show();
         isPermissionGranted = true;
     }
 
@@ -173,63 +193,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    LocationCallback mLocationCallback = new LocationCallback() {
-        @Override
-        public void onLocationResult(LocationResult locationResult) {
-            List<Location> locationList = locationResult.getLocations();
-            if (locationList.size() > 0) {
-                //The last location in the list is the newest
-                Location location = locationList.get(locationList.size() - 1);
-                Log.i("MapsActivity", "Location: " + location.getLatitude() + " " + location.getLongitude());
-                Location mLastLocation = location;
+
+    private void moveCameraToDevicePosition() {
+
+        if (isPermissionGranted) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
+                return;
             }
-        }
-    };
 
-
-    private void moveCameraToDevicePosition(){
-
-        providerClient = LocationServices.getFusedLocationProviderClient(this);
-
-        try {
-            if (isPermissionGranted) {
-
-                LocationRequest locationRequest = new LocationRequest();
-                locationRequest.setInterval(120000); // two minute interval
-                locationRequest.setFastestInterval(120000);
-                locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-
-                providerClient.requestLocationUpdates(locationRequest, mLocationCallback, Looper.myLooper());
-
-                final Task<Location> deviceLocation = providerClient.getLastLocation();
-                deviceLocation.addOnCompleteListener(this, new OnCompleteListener<Location>() {
+        providerClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
-                    public void onComplete(@NonNull Task<Location> taskGetLocation) {
-                        if (taskGetLocation.isSuccessful() && taskGetLocation.isComplete()) {
-
-                            Location deviceCurrentLocation = taskGetLocation.getResult();
-
-                            if (deviceCurrentLocation != null)
-                            {
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
-                                        deviceCurrentLocation.getLatitude(),
-                                        deviceCurrentLocation.getLongitude()), INITIAL_ZOOM));
-                            }else{
-                                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
-                            }
-
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
+                                    location.getLatitude(),
+                                    location.getLongitude()), INITIAL_ZOOM));
                         } else {
-                            //indiquer à l'utilisateur que la position n'a pas pu être trouvé
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
                         }
                     }
                 });
-            }
-            else
-            {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
-            }
-        }catch (SecurityException e){
-            //TODO
         }
     }
 
@@ -300,6 +285,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         askForDeviceLocationPermission();
+
         moveCameraToDevicePosition();
 
         initSearch();
