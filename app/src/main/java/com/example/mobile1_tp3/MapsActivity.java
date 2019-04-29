@@ -26,9 +26,11 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.example.mobile1_tp3.database.DbConnectionFactory;
 import com.example.mobile1_tp3.database.ElectricalTerminalRepository;
+import com.example.mobile1_tp3.database.FavoriteTerminalRepository;
 import com.example.mobile1_tp3.database.PointOfInterestRepository;
 import com.example.mobile1_tp3.electricalTerminals.AsyncParseElectricalTerminal;
 import com.example.mobile1_tp3.electricalTerminals.ElectricalTerminal;
@@ -64,7 +66,6 @@ import java.util.List;
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, AsyncParseElectricalTerminal.Listener,
         AsyncParsePointOfInterest.Listener, GoogleMap.OnMarkerClickListener {
 
-    public static final int MAX_TERMINAL_RANGE = 15000;
     private static final int INITIAL_ZOOM = 12;
     private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
     private static final int LOCATION_PERMISSION_REQUEST = 1;
@@ -72,18 +73,21 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private SQLiteDatabase Database;
     private ElectricalTerminalRepository terminalRepository;
     private PointOfInterestRepository pointOfInterestRepository;
+    private FavoriteTerminalRepository favoriteTerminalRepository;
     private FusedLocationProviderClient providerClient;
     private GoogleMap mMap;
     private boolean isTerminalSelected;
-    private int indexTerminal;
+    private int indexSelectedTerminal;
 
     //widgets
     private EditText searchText;
     private ArrayList<Marker> markersTerminal;
     private ArrayList<Marker> markersInterest;
+    private ArrayList<Marker> markersFavorite;
     private ProgressBar progressBar;
     private DrawerLayout drawerLayout;
     private View rootView;
+    private ToggleButton favoriteButton;
 
     private boolean isPermissionGranted = false;
 
@@ -97,6 +101,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         progressBar = findViewById(R.id.progressBar);
         progressBar.setVisibility(View.VISIBLE);
+
+        favoriteButton = findViewById(R.id.favoriteButton);
+        favoriteButton.setEnabled(false);
+        favoriteButton.setOnClickListener(this::onFavoriteButtonClick);
 
         drawerLayout = findViewById(R.id.drawer_layout);
 
@@ -112,6 +120,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         terminalRepository = new ElectricalTerminalRepository(Database);
         pointOfInterestRepository = new PointOfInterestRepository(Database);
+        favoriteTerminalRepository = new FavoriteTerminalRepository(Database);
 
         try {
             final InputStream FILE_ELECTRICAL_TERMINAL = this.getResources().openRawResource(R.raw.bornes);
@@ -136,7 +145,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         searchText = (EditText) findViewById(R.id.searchText);
         isTerminalSelected = false;
-        indexTerminal = 0;
+        indexSelectedTerminal = 0;
 
         providerClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -298,6 +307,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onMapClick(LatLng latLng) {
                 isTerminalSelected = false;
+                favoriteButton.setEnabled(false);
+                favoriteButton.setChecked(false);
                 for (int i = 0; i < markersInterest.size(); i++)
                 {
                     markersInterest.get(i).setVisible(false);
@@ -333,8 +344,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         {
             if (marker.equals(markersTerminal.get(i)))
             {
+                favoriteButton.setEnabled(true);
                 isTerminalSelected = true;
-                indexTerminal = i;
+                indexSelectedTerminal = i;
 
                 setPointOfInterestNodes();
                 return true;
@@ -352,9 +364,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             try {
                 Double latitude = pointOfInterests.get(i).getLatitude();
                 Double longitude = pointOfInterests.get(i).getLongitude();
+                String title = pointOfInterests.get(i).getName();
                 markersInterest.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
-                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))));
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))
+                        .title(title)));
             }
             catch (NumberFormatException e)
             {
@@ -397,5 +411,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onParsePointOfInterestComplete()
     {
         setPointOfInterestNodes();
+    }
+
+    public void onFavoriteButtonClick(View view) {
+        if (favoriteButton.isChecked()) {
+            Double latitude = markersTerminal.get(indexSelectedTerminal).getPosition().latitude;
+            Double longitude = markersTerminal.get(indexSelectedTerminal).getPosition().longitude;
+            favoriteTerminalRepository.create(new ElectricalTerminal("Favorite", latitude, longitude));
+            markersFavorite.add(mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(latitude, longitude))
+                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))));
+        }
     }
 }
