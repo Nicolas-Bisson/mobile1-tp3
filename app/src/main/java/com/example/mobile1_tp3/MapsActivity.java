@@ -366,9 +366,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             try {
                 Double latitude = pointOfInterests.get(i).getLatitude();
                 Double longitude = pointOfInterests.get(i).getLongitude();
+                String title = pointOfInterests.get(i).getName();
                 markersInterest.add(mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
-                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))));
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))
+                        .title(title)));
             }
             catch (NumberFormatException e)
             {
