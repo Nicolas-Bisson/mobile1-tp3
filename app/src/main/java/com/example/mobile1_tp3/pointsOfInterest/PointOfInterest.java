@@ -2,7 +2,6 @@ package com.example.mobile1_tp3.pointsOfInterest;
 
 public class PointOfInterest
 {
-    private Long id;
     private String name;
     private Double latitude;
     private Double longitude;
@@ -12,14 +11,6 @@ public class PointOfInterest
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public PointOfInterest(String name)

@@ -4,10 +4,10 @@ public class ElectricalTerminalTable {
 
     public static final String CREATE = "" +
             "CREATE TABLE IF NOT EXISTS electricalTerminals (\n" +
-            "    id         INTEGER     PRIMARY KEY     AUTOINCREMENT,\n" +
-            "    name       VARCHAR(10),\n" +
+            "    name       VARCHAR(10) PRIMARY KEY,\n" +
             "    latitude   REAL,\n" +
             "    longitude  REAL\n" +
+            "    UNIQUE(latitude, longitude)\n" +
             ");";
 
     public static final String INSERT = "" +
@@ -22,31 +22,30 @@ public class ElectricalTerminalTable {
             ");";
 
     public static final String SELECT_ALL = "" +
-            "SELECT id, name, latitude, longitude\n" +
+            "SELECT name, latitude, longitude\n" +
             "FROM electricalTerminals;";
 
-    public static final String SELECT_BY_ID = "" +
-            "SELECT id, name, latitude, longitude\n" +
+    public static final String SELECT_BY_NAME = "" +
+            "SELECT latitude, longitude\n" +
             "FROM electricalTerminals\n" +
-            "WHERE id = ?;";
+            "WHERE name = ?;";
 
     public static final String SELECT_BY_POSITION = "" +
-            "SELECT id, name, latitude, longitude\n" +
+            "SELECT name, latitude, longitude\n" +
             "FROM electricalTerminals\n" +
             "WHERE (latitude BETWEEN ? AND ?) AND (longitude BETWEEN ? AND ?);";
 
     public static final  String UPDATE = "" +
             "UPDATE electricalTerminals\n" +
             "SET \n" +
-            "    name = ?,\n" +
             "    latitude = ?,\n" +
             "    longitude = ?\n" +
             "WHERE\n" +
-            "    id = ?;";
+            "    name = ?;";
 
     public static final String DELETE = "" +
             "DELETE FROM electricalTerminals\n" +
-            "WHERE id = ?;";
+            "WHERE name = ?;";
 
     public static final String DROP = "" +
             "DROP TABLE IF EXISTS electricalTerminals";
