@@ -1,6 +1,5 @@
 package com.example.mobile1_tp3;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -10,15 +9,13 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
-import android.app.PendingIntent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Looper;
-import android.util.Log;
+
 import android.view.View;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -38,12 +35,8 @@ import com.example.mobile1_tp3.pointsOfInterest.AsyncParsePointOfInterest;
 import com.example.mobile1_tp3.pointsOfInterest.PointOfInterest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -52,11 +45,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.maps.android.SphericalUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -133,7 +123,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             System.out.println(e.toString());
         }
 
-
         markersTerminal = new ArrayList<>();
         markersInterest = new ArrayList<>();
 
@@ -148,20 +137,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         indexSelectedTerminal = 0;
 
         providerClient = LocationServices.getFusedLocationProviderClient(this);
-
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-                for (Location location : locationResult.getLocations()) {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
-                            location.getLatitude(),
-                            location.getLongitude()), INITIAL_ZOOM));
-                }
-            }
-        };
     }
 
     private void askForDeviceLocationPermission() {
@@ -202,30 +177,28 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-
     private void moveCameraToDevicePosition() {
 
-        if (isPermissionGranted) {
-            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
-                return;
-            }
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            moveCamera(QUEBEC);
+            return;
+        }
 
         providerClient.getLastLocation()
                 .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                     @Override
-                    public void onSuccess(Location location) {
-                        if (location != null) {
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(
-                                    location.getLatitude(),
-                                    location.getLongitude()), INITIAL_ZOOM));
+                    public void onSuccess(Location deviceLocation) {
+
+                        if (deviceLocation != null) {
+                            moveCamera(new LatLng(
+                                    deviceLocation.getLatitude(),
+                                    deviceLocation.getLongitude()));
                         } else {
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
+                            moveCamera(QUEBEC);
                         }
                     }
                 });
-        }
     }
 
     @Override
@@ -237,7 +210,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     private void initSearch()
     {
@@ -269,13 +241,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         catch (IOException e)
         {
+
         }
 
         if (list.size() > 0)
         {
-            Address address = list.get(0);
+            Address addressSearched = list.get(0);
 
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(address.getLatitude(), address.getLongitude()), INITIAL_ZOOM));
+            moveCamera(new LatLng(addressSearched.getLatitude(), addressSearched.getLongitude()));
         }
 
 
@@ -330,6 +303,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         });
+    }
+
+    private void moveCamera(LatLng newPosition){
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPosition, INITIAL_ZOOM));
     }
 
     private void deleteAllInterestMarker() {
