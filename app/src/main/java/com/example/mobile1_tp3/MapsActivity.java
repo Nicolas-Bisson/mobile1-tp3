@@ -1,6 +1,5 @@
 package com.example.mobile1_tp3;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -10,15 +9,12 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
-import android.app.PendingIntent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -38,12 +34,8 @@ import com.example.mobile1_tp3.pointsOfInterest.AsyncParsePointOfInterest;
 import com.example.mobile1_tp3.pointsOfInterest.PointOfInterest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResponse;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -52,11 +44,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.maps.android.SphericalUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,7 +56,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         AsyncParsePointOfInterest.Listener, GoogleMap.OnMarkerClickListener {
 
     private static final int INITIAL_ZOOM = 12;
-    private static final LatLng QUEBEC = new LatLng(46.829853, -71.254028);
+    private static final LatLng QUEBEC_POSITION = new LatLng(46.829853, -71.254028);
     private static final int LOCATION_PERMISSION_REQUEST = 1;
 
     private SQLiteDatabase Database;
@@ -208,7 +197,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (isPermissionGranted) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC_POSITION, INITIAL_ZOOM));
                 return;
             }
 
@@ -221,7 +210,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     location.getLatitude(),
                                     location.getLongitude()), INITIAL_ZOOM));
                         } else {
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC, INITIAL_ZOOM));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(QUEBEC_POSITION, INITIAL_ZOOM));
                         }
                     }
                 });
@@ -284,11 +273,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
