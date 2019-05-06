@@ -213,7 +213,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
-    private void initSearch()
+    private void setListenerOnCitySearch()
     {
         searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -221,7 +221,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE)
                 {
-                    geoLocate();
+                    locateSearchedCity();
                 }
                 return false;
             }
@@ -229,7 +229,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //Set the camera on the searched city
-    private void geoLocate()
+    private void locateSearchedCity()
     {
         isTerminalSelected = false;
         String searchString = searchText.getText().toString();
@@ -249,11 +249,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (list.size() > 0)
         {
             Address addressSearched = list.get(0);
-
             moveCamera(new LatLng(addressSearched.getLatitude(), addressSearched.getLongitude()));
         }
-
-
     }
 
     /**
@@ -270,14 +267,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         askForDeviceLocationPermission();
-
         moveCameraToDevicePosition();
 
-        initSearch();
-        for (int i = 0; i < markersInterest.size(); i++)
-        {
+        setListenerOnCitySearch();
+        setPointInterestMarkerInvisible();
+
+        setMapListener();
+        progressBar.setVisibility(View.GONE);
+    }
+
+    private void setPointInterestMarkerInvisible() {
+        for (int i = 0; i < markersInterest.size(); i++) {
             markersInterest.get(i).setVisible(false);
         }
+    }
+
+    private void setMapListener() {
+
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -285,13 +291,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 isTerminalSelected = false;
                 favoriteButton.setEnabled(false);
                 favoriteButton.setChecked(false);
-                for (int i = 0; i < markersInterest.size(); i++)
-                {
-                    markersInterest.get(i).setVisible(false);
-                }
+
+                setPointInterestMarkerInvisible();
             }
         });
-
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
             public void onCameraIdle()
@@ -305,7 +308,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         });
-        progressBar.setVisibility(View.GONE);
     }
 
     private void moveCamera(LatLng newPosition){
@@ -346,6 +348,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         for (int i = markersTerminal.size()-1; i >= 0; i--) {
             markersTerminal.get(i).remove();
         }
+        markersTerminal.clear();
 
         List<ElectricalTerminal> electricalTerminals = terminalRepository.readByPosition(getCurrentPosition());
         for (int i = 0; i < electricalTerminals.size(); i++) {
@@ -401,7 +404,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             terminalRepository.delete(terminalName);
         }
         else {
-
             LatLng electricalTerminalPostion = markersFavorite.get(indexSelectedTerminal).getPosition();
             favoriteTerminalRepository.create(new ElectricalTerminal(terminalName, electricalTerminalPostion.latitude,
                     electricalTerminalPostion.longitude));
