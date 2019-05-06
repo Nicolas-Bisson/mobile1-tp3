@@ -28,12 +28,12 @@ import com.example.mobile1_tp3.database.DbConnectionFactory;
 import com.example.mobile1_tp3.database.ElectricalTerminalRepository;
 import com.example.mobile1_tp3.database.FavoriteTerminalRepository;
 import com.example.mobile1_tp3.database.PointOfInterestRepository;
+import com.example.mobile1_tp3.electricalTerminals.AsyncGetTerminalToShowFromRepository;
 import com.example.mobile1_tp3.electricalTerminals.AsyncParseElectricalTerminal;
 import com.example.mobile1_tp3.electricalTerminals.ElectricalTerminal;
 import com.example.mobile1_tp3.pointsOfInterest.AsyncParsePointOfInterest;
 import com.example.mobile1_tp3.pointsOfInterest.PointOfInterest;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -52,7 +52,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, AsyncParseElectricalTerminal.Listener,
-        AsyncParsePointOfInterest.Listener, GoogleMap.OnMarkerClickListener {
+        AsyncParsePointOfInterest.Listener, AsyncGetTerminalToShowFromRepository.Listener, GoogleMap.OnMarkerClickListener {
 
     private static final int INITIAL_ZOOM = 12;
     private static final LatLng QUEBEC_POSITION = new LatLng(46.829853, -71.254028);
@@ -78,9 +78,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ToggleButton favoriteButton;
 
     private boolean isPermissionGranted = false;
-
-
-    LocationCallback locationCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -291,7 +288,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             {
                 if(!isTerminalSelected)
                 {
-                    setElectricalTerminalNodes();
+                    initiateSetTerminalNodes();
                     if (markersInterest.size() > 0) {
                         deleteAllInterestMarker();
                     }
@@ -334,13 +331,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void setElectricalTerminalNodes()
+    private void setElectricalTerminalNodes(List<ElectricalTerminal> electricalTerminals)
     {
         for (int i = markersTerminal.size()-1; i >= 0; i--) {
             markersTerminal.get(i).remove();
         }
 
-        List<ElectricalTerminal> electricalTerminals = terminalRepository.readByPosition(getCurrentPosition());
         for (int i = 0; i < electricalTerminals.size(); i++) {
             try {
                 LatLng electricalTerminalPosition = new LatLng(electricalTerminals.get(i).getLatitude(),
@@ -369,7 +365,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onParseElectricalTerminalComplete()
     {
-        setElectricalTerminalNodes();
+        initiateSetTerminalNodes();
     }
 
     @Override
@@ -417,6 +413,30 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
             }
         }
+
+        for (int i = 0; i < markersFavorite.size(); i++)
+        {
+            if (marker.equals(markersFavorite.get(i)))
+            {
+                favoriteButton.setEnabled(true);
+                favoriteButton.setChecked(true);
+                isTerminalSelected = true;
+                indexSelectedTerminal = i;
+
+                setPointOfInterestNodes();
+                return true;
+            }
+        }
         return false;
+    }
+
+    @Override
+    public void onGetTerminalToShowFromRepositoryComplete(List<ElectricalTerminal> electricalTerminals) {
+        setElectricalTerminalNodes(electricalTerminals);
+    }
+
+    public void initiateSetTerminalNodes() {
+        AsyncGetTerminalToShowFromRepository task = new AsyncGetTerminalToShowFromRepository(this, getCurrentPosition());
+        task.execute(terminalRepository);
     }
 }
