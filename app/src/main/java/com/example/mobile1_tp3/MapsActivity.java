@@ -353,9 +353,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 LatLng electricalTerminalPosition = new LatLng(electricalTerminals.get(i).getLatitude(),
                         electricalTerminals.get(i).getLongitude());
 
-                markersTerminal.add(mMap.addMarker(new MarkerOptions()
-                        .position(electricalTerminalPosition)
-                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_electrical_terminal))));
+                CreateMarkerTerminal(electricalTerminalPosition, electricalTerminals.get(i).getName());
             }
             catch (NumberFormatException e)
             {
@@ -364,9 +362,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void CreateMarkerTerminal(Double latitude, Double longitude, String title) {
+    private void CreateMarkerTerminal(LatLng markerPosition, String title) {
         markersTerminal.add(mMap.addMarker(new MarkerOptions()
-                .position(new LatLng(latitude, longitude))
+                .position(markerPosition)
                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_electrical_terminal))
                 .title(title)));
     }
@@ -397,16 +395,17 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     favoriteTerminalPosition.longitude));
             markersFavorite.add(mMap.addMarker(new MarkerOptions()
                     .position(favoriteTerminalPosition)
-                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))
+                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_favorite_terminal))
                     .title(terminalName)));
             markersTerminal.get(indexSelectedTerminal).remove();
             terminalRepository.delete(terminalName);
         }
         else {
-            Double terminalLatitude = markersFavorite.get(indexSelectedTerminal).getPosition().latitude;
-            Double terminalLongitude = markersFavorite.get(indexSelectedTerminal).getPosition().longitude;
-            favoriteTerminalRepository.create(new ElectricalTerminal(terminalName, terminalLatitude, terminalLongitude));
-            CreateMarkerTerminal(terminalLatitude, terminalLongitude, terminalName);
+
+            LatLng electricalTerminalPostion = markersFavorite.get(indexSelectedTerminal).getPosition();
+            favoriteTerminalRepository.create(new ElectricalTerminal(terminalName, electricalTerminalPostion.latitude,
+                    electricalTerminalPostion.longitude));
+            CreateMarkerTerminal(electricalTerminalPostion, terminalName);
             markersFavorite.get(indexSelectedTerminal).remove();
             favoriteTerminalRepository.delete(terminalName);
         }
