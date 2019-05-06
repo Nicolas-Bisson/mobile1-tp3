@@ -59,7 +59,7 @@ public class FavoriteTerminalRepository implements MarkerRepository<ElectricalTe
                 electricalTerminal = new ElectricalTerminal(name, latitude, longitude);
             }
         } catch (Exception e) {
-            throw new SQLException("Unable to read Country by id.", e);
+            throw new SQLException("Unable to read Favorite Terminal by name.", e);
         }
 
         return electricalTerminal;
@@ -89,10 +89,10 @@ public class FavoriteTerminalRepository implements MarkerRepository<ElectricalTe
         List<ElectricalTerminal> electricalTerminals = new ArrayList<>();
 
         try(Cursor cursor = database.rawQuery(FavoriteTerminalTable.SELECT_BY_POSITION, new String[]{
-                String.valueOf(currentPosition.latitude - detectionRange),
-                String.valueOf(currentPosition.latitude + detectionRange),
-                String.valueOf(currentPosition.longitude - detectionRange),
-                String.valueOf(currentPosition.longitude + detectionRange)
+                String.valueOf(currentPosition.latitude - DETECTION_RANGE),
+                String.valueOf(currentPosition.latitude + DETECTION_RANGE),
+                String.valueOf(currentPosition.longitude - DETECTION_RANGE),
+                String.valueOf(currentPosition.longitude + DETECTION_RANGE)
         })) {
             while (cursor.moveToNext()) {
                 String name = cursor.getString(0);

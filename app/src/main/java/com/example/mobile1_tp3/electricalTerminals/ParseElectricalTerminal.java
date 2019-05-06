@@ -26,7 +26,7 @@ public enum ParseElectricalTerminal
         {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-1"));
             String ligne = bufferedReader.readLine();
-            ArrayList<String> subString = new ArrayList<>();
+            ArrayList<String> subString;
             int countForReplacements = 0;
 
             while (ligne != null)

@@ -60,7 +60,7 @@ public class PointOfInterestRepository implements MarkerRepository<PointOfIntere
                 pointOfInterest = new PointOfInterest(name, latitude, longitude);
             }
         } catch (Exception e) {
-            throw new SQLException("Unable to read Country by id.", e);
+            throw new SQLException("Unable to read Point of Interest by name.", e);
         }
 
         return pointOfInterest;
@@ -90,10 +90,10 @@ public class PointOfInterestRepository implements MarkerRepository<PointOfIntere
         List<PointOfInterest> pointOfInterests = new ArrayList<>();
 
         try(Cursor cursor = database.rawQuery(PointOfInterestTable.SELECT_BY_POSITION, new String[]{
-                String.valueOf(currentPosition.latitude - detectionRange),
-                String.valueOf(currentPosition.latitude + detectionRange),
-                String.valueOf(currentPosition.longitude - detectionRange),
-                String.valueOf(currentPosition.longitude + detectionRange)
+                String.valueOf(currentPosition.latitude - DETECTION_RANGE),
+                String.valueOf(currentPosition.latitude + DETECTION_RANGE),
+                String.valueOf(currentPosition.longitude - DETECTION_RANGE),
+                String.valueOf(currentPosition.longitude + DETECTION_RANGE)
         })) {
             while (cursor.moveToNext()) {
                 String name = cursor.getString(0);

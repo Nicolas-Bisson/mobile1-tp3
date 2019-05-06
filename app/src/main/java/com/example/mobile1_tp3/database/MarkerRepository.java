@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface MarkerRepository<T> {
 
-    double detectionRange = 0.05;
+    double DETECTION_RANGE = 0.05;
 
     void create(T item);
 

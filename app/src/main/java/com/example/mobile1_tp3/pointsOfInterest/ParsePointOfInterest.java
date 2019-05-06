@@ -19,6 +19,7 @@ public enum ParsePointOfInterest
     public static final int EN_NAME_ROW = 2;
     public static final int LATITUDE_ROW = 14;
     public static final int LONGITUDE_ROW = 15;
+
     private TreeMap<String, PointOfInterest> pointOfInterests;
     private PointOfInterestRepository pointOfInterestRepository;
 
@@ -37,7 +38,6 @@ public enum ParsePointOfInterest
         {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamInfo, "ISO-8859-1"));
             String ligne = bufferedReader.readLine();
-            ArrayList<String> subString = new ArrayList<>();
 
             while (ligne != null)
             {
@@ -65,7 +65,7 @@ public enum ParsePointOfInterest
         {
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStreamAddress, "ISO-8859-1"));
             String ligne = bufferedReader.readLine();
-            ArrayList<String> subString = new ArrayList<>();
+            ArrayList<String> subString;
             int countForReplacements = 0;
 
             while (ligne != null)
