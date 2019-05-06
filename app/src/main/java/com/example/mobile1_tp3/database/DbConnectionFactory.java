@@ -12,8 +12,7 @@ public class DbConnectionFactory extends SQLiteOpenHelper {
     public static final int DB_VERSION = 3;
 
 
-    public DbConnectionFactory(Context context) {
-        super(context, DB_NAME, null, DB_VERSION);
+    public DbConnectionFactory(Context context) { super(context, DB_NAME, null, DB_VERSION);
     }
 
     @Override
