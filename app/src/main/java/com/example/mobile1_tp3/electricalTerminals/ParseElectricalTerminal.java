@@ -11,6 +11,10 @@ public enum ParseElectricalTerminal
 {
     Instance;
 
+    public static final int NAME_ROW = 0;
+    public static final int LATITUDE_ROW = 4;
+    public static final int LONGITUDE_ROW = 5;
+
     public void Parse(InputStream inputStream, ElectricalTerminalRepository terminalRepository)
     {
         loadElectricalTerminalCSV(inputStream, terminalRepository);
@@ -46,7 +50,7 @@ public enum ParseElectricalTerminal
                 }
                 String[] info = ligne.split("/");
                 try {
-                    terminalRepository.create(new ElectricalTerminal(info[0], Double.parseDouble(info[4]), Double.parseDouble(info[5])));
+                    terminalRepository.create(new ElectricalTerminal(info[NAME_ROW], Double.parseDouble(info[LATITUDE_ROW]), Double.parseDouble(info[LONGITUDE_ROW])));
                 }
                 catch (NumberFormatException ex) {
                     //ex.printStackTrace();

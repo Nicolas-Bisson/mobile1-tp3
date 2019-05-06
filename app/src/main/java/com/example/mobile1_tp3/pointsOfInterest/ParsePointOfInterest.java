@@ -14,6 +14,11 @@ public enum ParsePointOfInterest
 {
     Instance;
 
+    public static final int ID_ROW = 0;
+    public static final int FR_NAME_ROW = 1;
+    public static final int EN_NAME_ROW = 2;
+    public static final int LATITUDE_ROW = 14;
+    public static final int LONGITUDE_ROW = 15;
     private TreeMap<String, PointOfInterest> pointOfInterests;
     private PointOfInterestRepository pointOfInterestRepository;
 
@@ -36,11 +41,12 @@ public enum ParsePointOfInterest
 
             while (ligne != null)
             {
+
                 String[] info = ligne.split(",");
                 if(Resources.getSystem().getConfiguration().locale.getLanguage().equals("fr"))
-                pointOfInterests.put(info[0], new PointOfInterest(info[1]));
+                pointOfInterests.put(info[ID_ROW], new PointOfInterest(info[FR_NAME_ROW]));
                 else
-                pointOfInterests.put(info[0], new PointOfInterest(info[2]));
+                pointOfInterests.put(info[ID_ROW], new PointOfInterest(info[EN_NAME_ROW]));
                 ligne = bufferedReader.readLine();
             }
 
@@ -82,15 +88,15 @@ public enum ParsePointOfInterest
                     countForReplacements++;
                 }
                 String[] info = ligne.split("/");;
-                if(pointOfInterests.containsKey(info[0]))
+                if(pointOfInterests.containsKey(info[ID_ROW]))
                 {
                     if(info.length >= 15)
                     {
                         try {
                             pointOfInterestRepository.create(new PointOfInterest(
-                                    pointOfInterests.get(info[0]).getName(),
-                                    Double.parseDouble(info[14]),
-                                    Double.parseDouble(info[15])));
+                                    pointOfInterests.get(info[ID_ROW]).getName(),
+                                    Double.parseDouble(info[LATITUDE_ROW]),
+                                    Double.parseDouble(info[LONGITUDE_ROW])));
                         }
                         catch (NumberFormatException ex) {
                             //ex.printStackTrace();
