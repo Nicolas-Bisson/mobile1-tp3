@@ -24,7 +24,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
-
 import com.example.mobile1_tp3.database.DbConnectionFactory;
 import com.example.mobile1_tp3.database.ElectricalTerminalRepository;
 import com.example.mobile1_tp3.database.FavoriteTerminalRepository;
@@ -35,7 +34,6 @@ import com.example.mobile1_tp3.pointsOfInterest.AsyncParsePointOfInterest;
 import com.example.mobile1_tp3.pointsOfInterest.PointOfInterest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -183,7 +181,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 isPermissionGranted == true) {
-            moveCamera(QUEBEC);
+            moveCamera(QUEBEC_POSITION);
             return;
         }
 
@@ -197,7 +195,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                                     deviceLocation.getLatitude(),
                                     deviceLocation.getLongitude()));
                         } else {
-                            moveCamera(QUEBEC);
+                            moveCamera(QUEBEC_POSITION);
                         }
                     }
                 });
