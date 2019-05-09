@@ -288,6 +288,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             {
                 if(!isTerminalSelected)
                 {
+                    deleteAllTerminalMarker();
                     initiateSetTerminalNodes();
                     if (markersInterest.size() > 0) {
                         deleteAllInterestMarker();
@@ -306,6 +307,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         for (int i = markersInterest.size()-1; i >= 0; i--) {
             markersInterest.get(i).remove();
         }
+        markersInterest.clear();
+    }
+
+    private void deleteAllTerminalMarker() {
+        for (int i = markersTerminal.size()-1; i >= 0; i--) {
+            markersTerminal.get(i).remove();
+        }
+        markersTerminal.clear();
     }
 
     private void setPointOfInterestNodes()
@@ -333,10 +342,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void setElectricalTerminalNodes(List<ElectricalTerminal> electricalTerminals)
     {
-        for (int i = markersTerminal.size()-1; i >= 0; i--) {
-            markersTerminal.get(i).remove();
-        }
-
         for (int i = 0; i < electricalTerminals.size(); i++) {
             try {
                 LatLng electricalTerminalPosition = new LatLng(electricalTerminals.get(i).getLatitude(),
@@ -391,10 +396,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         else {
 
-            LatLng electricalTerminalPostion = markersFavorite.get(indexSelectedTerminal).getPosition();
-            favoriteTerminalRepository.create(new ElectricalTerminal(terminalName, electricalTerminalPostion.latitude,
-                    electricalTerminalPostion.longitude));
-            CreateMarkerTerminal(electricalTerminalPostion, terminalName);
+            LatLng electricalTerminalPosition = markersFavorite.get(indexSelectedTerminal).getPosition();
+            favoriteTerminalRepository.create(new ElectricalTerminal(terminalName, electricalTerminalPosition.latitude,
+                    electricalTerminalPosition.longitude));
+            CreateMarkerTerminal(electricalTerminalPosition, terminalName);
             markersFavorite.get(indexSelectedTerminal).remove();
             favoriteTerminalRepository.delete(terminalName);
         }

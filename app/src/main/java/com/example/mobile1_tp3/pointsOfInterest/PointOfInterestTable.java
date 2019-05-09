@@ -4,7 +4,8 @@ public class PointOfInterestTable {
 
     public static final String CREATE = "" +
             "CREATE TABLE IF NOT EXISTS pointsOfInterest (\n" +
-            "    name       VARCHAR(30) PRIMARY KEY,\n" +
+            "    id         INTEGER     PRIMARY KEY     AUTOINCREMENT,\n" +
+            "    name       VARCHAR(30),\n" +
             "    latitude   REAL,\n" +
             "    longitude  REAL\n" +
             ");";
@@ -37,6 +38,7 @@ public class PointOfInterestTable {
     public static final  String UPDATE = "" +
             "UPDATE pointsOfInterest\n" +
             "SET \n" +
+            "    name = ?,\n" +
             "    latitude = ?,\n" +
             "    longitude = ?\n" +
             "WHERE\n" +
@@ -44,7 +46,7 @@ public class PointOfInterestTable {
 
     public static final String DELETE = "" +
             "DELETE FROM pointsOfInterest\n" +
-            "WHERE name = ?;";
+            "WHERE id = ?;";
 
     public static final String DROP = "" +
             "DROP TABLE IF EXISTS pointsOfInterest";

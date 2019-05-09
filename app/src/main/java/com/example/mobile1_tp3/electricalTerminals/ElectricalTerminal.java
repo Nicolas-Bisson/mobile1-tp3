@@ -2,6 +2,7 @@ package com.example.mobile1_tp3.electricalTerminals;
 
 public class ElectricalTerminal
 {
+    private Long id;
     private String name;
     private Double latitude;
     private Double longitude;
@@ -16,6 +17,14 @@ public class ElectricalTerminal
     public String getName()
     {
         return name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setName(String nomBorne) { this.name = nomBorne; }

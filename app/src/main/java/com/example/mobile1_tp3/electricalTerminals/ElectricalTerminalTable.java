@@ -4,10 +4,10 @@ public class ElectricalTerminalTable {
 
     public static final String CREATE = "" +
             "CREATE TABLE IF NOT EXISTS electricalTerminals (\n" +
-            "    name       VARCHAR(10) PRIMARY KEY,\n" +
+            "    id         INTEGER     PRIMARY KEY     AUTOINCREMENT,\n" +
+            "    name       VARCHAR(10) UNIQUE,\n" +
             "    latitude   REAL,\n" +
             "    longitude  REAL\n" +
-            "    UNIQUE(latitude, longitude)\n" +
             ");";
 
     public static final String INSERT = "" +
@@ -38,6 +38,7 @@ public class ElectricalTerminalTable {
     public static final  String UPDATE = "" +
             "UPDATE electricalTerminals\n" +
             "SET \n" +
+            "    name = ?,\n" +
             "    latitude = ?,\n" +
             "    longitude = ?\n" +
             "WHERE\n" +
