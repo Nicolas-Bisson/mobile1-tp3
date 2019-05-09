@@ -5,7 +5,7 @@ public class PointOfInterestTable {
     public static final String CREATE = "" +
             "CREATE TABLE IF NOT EXISTS pointsOfInterest (\n" +
             "    id         INTEGER     PRIMARY KEY     AUTOINCREMENT,\n" +
-            "    name       VARCHAR(30),\n" +
+            "    name       VARCHAR(30) UNIQUE,\n" +
             "    latitude   REAL,\n" +
             "    longitude  REAL\n" +
             ");";
