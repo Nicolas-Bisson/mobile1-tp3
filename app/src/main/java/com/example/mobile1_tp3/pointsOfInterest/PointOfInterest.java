@@ -14,6 +14,14 @@ public class PointOfInterest
         this.longitude = longitude;
     }
 
+    public PointOfInterest(Long id, String name, Double latitude, Double longitude)
+    {
+        this.id = id;
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public Long getId() {
         return id;
     }

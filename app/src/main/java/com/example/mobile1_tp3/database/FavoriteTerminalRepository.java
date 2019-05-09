@@ -36,6 +36,13 @@ public class FavoriteTerminalRepository implements MarkerRepository<ElectricalTe
             cursor.moveToNext(); //Write into database.
             cursor.close();
 
+            cursor = database.rawQuery("SELECT last_insert_rowid()", new String[]{});
+            cursor.moveToNext();
+
+            electricalTerminal.setId(cursor.getLong(0));
+
+            cursor.close();
+
             database.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
@@ -48,15 +55,16 @@ public class FavoriteTerminalRepository implements MarkerRepository<ElectricalTe
     }
 
     @Override
-    public ElectricalTerminal readByName(String name) {
+    public ElectricalTerminal readById(long id) {
         ElectricalTerminal electricalTerminal = null;
 
-        try(Cursor cursor = database.rawQuery(FavoriteTerminalTable.SELECT_BY_NAME, new String[]{name})) {
+        try(Cursor cursor = database.rawQuery(FavoriteTerminalTable.SELECT_BY_ID, new String[]{String.valueOf(id)})) {
             if (cursor.moveToNext()) {
-                Double latitude = cursor.getDouble(0);
-                Double longitude = cursor.getDouble(1);
+                String name = cursor.getString(0);
+                Double latitude = cursor.getDouble(1);
+                Double longitude = cursor.getDouble(2);
 
-                electricalTerminal = new ElectricalTerminal(name, latitude, longitude);
+                electricalTerminal = new ElectricalTerminal(id, name, latitude, longitude);
             }
         } catch (Exception e) {
             throw new SQLException("Unable to read Favorite Terminal by name.", e);
@@ -71,11 +79,12 @@ public class FavoriteTerminalRepository implements MarkerRepository<ElectricalTe
 
         try(Cursor cursor = database.rawQuery(FavoriteTerminalTable.SELECT_ALL, new String[]{})) {
             while (cursor.moveToNext()) {
-                String name = cursor.getString(0);
-                Double latitude = cursor.getDouble(1);
-                Double longitude = cursor.getDouble(2);
+                Long id = cursor.getLong(0);
+                String name = cursor.getString(1);
+                Double latitude = cursor.getDouble(2);
+                Double longitude = cursor.getDouble(3);
 
-                electricalTerminals.add(new ElectricalTerminal(name, latitude, longitude));
+                electricalTerminals.add(new ElectricalTerminal(id, name, latitude, longitude));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,11 +104,12 @@ public class FavoriteTerminalRepository implements MarkerRepository<ElectricalTe
                 String.valueOf(currentPosition.longitude + DETECTION_RANGE)
         })) {
             while (cursor.moveToNext()) {
-                String name = cursor.getString(0);
-                Double latitude = cursor.getDouble(1);
-                Double longitude = cursor.getDouble(2);
+                Long id = cursor.getLong(0);
+                String name = cursor.getString(1);
+                Double latitude = cursor.getDouble(2);
+                Double longitude = cursor.getDouble(3);
 
-                electricalTerminals.add(new ElectricalTerminal(name, latitude, longitude));
+                electricalTerminals.add(new ElectricalTerminal(id, name, latitude, longitude));
             }
         } catch (Exception e) {
             e.printStackTrace();

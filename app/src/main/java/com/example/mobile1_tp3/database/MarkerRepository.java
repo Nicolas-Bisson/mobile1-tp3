@@ -10,7 +10,7 @@ public interface MarkerRepository<T> {
 
     void create(T item);
 
-    T readByName(String name);
+    T readById(long id);
 
     List<T> readAll();
 

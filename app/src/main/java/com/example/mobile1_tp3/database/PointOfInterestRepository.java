@@ -37,6 +37,13 @@ public class PointOfInterestRepository implements MarkerRepository<PointOfIntere
             cursor.moveToNext(); //Write into database.
             cursor.close();
 
+            cursor = database.rawQuery("SELECT last_insert_rowid()", new String[]{});
+            cursor.moveToNext();
+
+            pointOfInterest.setId(cursor.getLong(0));
+
+            cursor.close();
+
             database.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
@@ -49,15 +56,16 @@ public class PointOfInterestRepository implements MarkerRepository<PointOfIntere
     }
 
     @Override
-    public PointOfInterest readByName(String name) {
+    public PointOfInterest readById(long id) {
         PointOfInterest pointOfInterest = null;
 
-        try(Cursor cursor = database.rawQuery(PointOfInterestTable.SELECT_BY_NAME, new String[]{name})) {
+        try(Cursor cursor = database.rawQuery(PointOfInterestTable.SELECT_BY_ID, new String[]{String.valueOf(id)})) {
             if (cursor.moveToNext()) {
-                Double latitude = cursor.getDouble(0);
-                Double longitude = cursor.getDouble(1);
+                String name = cursor.getString(0);
+                Double latitude = cursor.getDouble(1);
+                Double longitude = cursor.getDouble(2);
 
-                pointOfInterest = new PointOfInterest(name, latitude, longitude);
+                pointOfInterest = new PointOfInterest(id, name, latitude, longitude);
             }
         } catch (Exception e) {
             throw new SQLException("Unable to read Point of Interest by name.", e);
@@ -72,11 +80,12 @@ public class PointOfInterestRepository implements MarkerRepository<PointOfIntere
 
         try(Cursor cursor = database.rawQuery(PointOfInterestTable.SELECT_ALL, new String[]{})) {
             while (cursor.moveToNext()) {
-                String name = cursor.getString(0);
-                Double latitude = cursor.getDouble(1);
-                Double longitude = cursor.getDouble(2);
+                Long id = cursor.getLong(0);
+                String name = cursor.getString(1);
+                Double latitude = cursor.getDouble(2);
+                Double longitude = cursor.getDouble(3);
 
-                pointOfInterests.add(new PointOfInterest(name, latitude, longitude));
+                pointOfInterests.add(new PointOfInterest(id, name, latitude, longitude));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,11 +105,12 @@ public class PointOfInterestRepository implements MarkerRepository<PointOfIntere
                 String.valueOf(currentPosition.longitude + DETECTION_RANGE)
         })) {
             while (cursor.moveToNext()) {
-                String name = cursor.getString(0);
-                Double latitude = cursor.getDouble(1);
-                Double longitude = cursor.getDouble(2);
+                Long id = cursor.getLong(0);
+                String name = cursor.getString(1);
+                Double latitude = cursor.getDouble(2);
+                Double longitude = cursor.getDouble(3);
 
-                pointOfInterests.add(new PointOfInterest(name, latitude, longitude));
+                pointOfInterests.add(new PointOfInterest(id, name, latitude, longitude));
             }
         } catch (Exception e) {
             e.printStackTrace();

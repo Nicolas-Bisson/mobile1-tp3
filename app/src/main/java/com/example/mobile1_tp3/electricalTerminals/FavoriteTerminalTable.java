@@ -22,16 +22,16 @@ public class FavoriteTerminalTable {
             ");";
 
     public static final String SELECT_ALL = "" +
-            "SELECT name, latitude, longitude\n" +
+            "SELECT id, name, latitude, longitude\n" +
             "FROM favoriteTerminals;";
 
-    public static final String SELECT_BY_NAME = "" +
-            "SELECT latitude, longitude\n" +
+    public static final String SELECT_BY_ID = "" +
+            "SELECT name, latitude, longitude\n" +
             "FROM favoriteTerminals\n" +
-            "WHERE name = ?;";
+            "WHERE id = ?;";
 
     public static final String SELECT_BY_POSITION = "" +
-            "SELECT name, latitude, longitude\n" +
+            "SELECT id, name, latitude, longitude\n" +
             "FROM favoriteTerminals\n" +
             "WHERE (latitude BETWEEN ? AND ?) AND (longitude BETWEEN ? AND ?);";
 
@@ -42,7 +42,7 @@ public class FavoriteTerminalTable {
             "    latitude = ?,\n" +
             "    longitude = ?\n" +
             "WHERE\n" +
-            "    name = ?;";
+            "    id = ?;";
 
     public static final String DELETE = "" +
             "DELETE FROM favoriteTerminals\n" +

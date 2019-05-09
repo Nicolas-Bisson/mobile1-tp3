@@ -343,7 +343,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             LatLng favoriteTerminalPosition = markersTerminal.get(indexSelectedTerminal).getPosition();
 
-            favoriteTerminalRepository.create(new ElectricalTerminal("Favorite", favoriteTerminalPosition.latitude,
+            favoriteTerminalRepository.create(new ElectricalTerminal(terminalName, favoriteTerminalPosition.latitude,
                     favoriteTerminalPosition.longitude));
             markersFavorite.add(mMap.addMarker(new MarkerOptions()
                     .position(favoriteTerminalPosition)
