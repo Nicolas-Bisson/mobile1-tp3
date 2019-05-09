@@ -395,6 +395,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .title(terminalName)));
             markersTerminal.get(indexSelectedTerminal).remove();
             terminalRepository.delete(terminalName);
+            onMarkerClick(markersFavorite.get(markersFavorite.size()-1));
         }
         else {
 
@@ -404,6 +405,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             CreateMarkerTerminal(electricalTerminalPosition, terminalName);
             markersFavorite.get(indexSelectedTerminal).remove();
             favoriteTerminalRepository.delete(terminalName);
+            onMarkerClick(markersTerminal.get(markersTerminal.size()-1));
         }
     }
 
