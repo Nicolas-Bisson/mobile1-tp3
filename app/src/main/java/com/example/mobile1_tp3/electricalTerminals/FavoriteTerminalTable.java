@@ -1,10 +1,11 @@
 package com.example.mobile1_tp3.electricalTerminals;
 
 public class FavoriteTerminalTable {
+
     public static final String CREATE = "" +
             "CREATE TABLE IF NOT EXISTS favoriteTerminals (\n" +
             "    id         INTEGER     PRIMARY KEY     AUTOINCREMENT,\n" +
-            "    name       VARCHAR(10) UNIQUE,\n" +
+            "    name       VARCHAR(10),\n" +
             "    latitude   REAL,\n" +
             "    longitude  REAL\n" +
             ");";
