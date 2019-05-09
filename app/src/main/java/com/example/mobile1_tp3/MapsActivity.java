@@ -31,8 +31,10 @@ import com.example.mobile1_tp3.database.PointOfInterestRepository;
 import com.example.mobile1_tp3.electricalTerminals.AsyncGetTerminalToShowFromRepository;
 import com.example.mobile1_tp3.electricalTerminals.AsyncParseElectricalTerminal;
 import com.example.mobile1_tp3.electricalTerminals.ElectricalTerminal;
+import com.example.mobile1_tp3.electricalTerminals.ElectricalTerminalMarker;
 import com.example.mobile1_tp3.pointsOfInterest.AsyncParsePointOfInterest;
 import com.example.mobile1_tp3.pointsOfInterest.PointOfInterest;
+import com.example.mobile1_tp3.pointsOfInterest.PointOfInterestMarker;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -72,6 +74,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<Marker> markersTerminal;
     private ArrayList<Marker> markersInterest;
     private ArrayList<Marker> markersFavorite;
+    ElectricalTerminalMarker electricalTerminalMarker;
+    PointOfInterestMarker pointOfInterestMarker;
     private ProgressBar progressBar;
     private DrawerLayout drawerLayout;
     private View rootView;
@@ -121,6 +125,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         markersTerminal = new ArrayList<>();
         markersInterest = new ArrayList<>();
         markersFavorite = new ArrayList<>();
+        electricalTerminalMarker = new ElectricalTerminalMarker();
+        pointOfInterestMarker = new PointOfInterestMarker();
 
         final SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -178,7 +184,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 isPermissionGranted == true) {
-            moveCamera(QUEBEC_POSITION);
+            moveCamera(QUEBEC_POSITION, INITIAL_ZOOM);
             return;
         }
 
@@ -190,9 +196,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (deviceLocation != null) {
                             moveCamera(new LatLng(
                                     deviceLocation.getLatitude(),
-                                    deviceLocation.getLongitude()));
+                                    deviceLocation.getLongitude()), INITIAL_ZOOM);
                         } else {
-                            moveCamera(QUEBEC_POSITION);
+                            moveCamera(QUEBEC_POSITION, INITIAL_ZOOM);
                         }
                     }
                 });
@@ -244,7 +250,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (list.size() > 0)
         {
             Address addressSearched = list.get(0);
-            moveCamera(new LatLng(addressSearched.getLatitude(), addressSearched.getLongitude()));
+            moveCamera(new LatLng(addressSearched.getLatitude(), addressSearched.getLongitude()), INITIAL_ZOOM);
         }
     }
 
@@ -260,16 +266,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         moveCameraToDevicePosition();
 
         setListenerOnCitySearch();
-        setPointInterestMarkerInvisible();
+        pointOfInterestMarker.setPointInterestMarkerInvisible(markersInterest);
 
         setMapListener();
         progressBar.setVisibility(View.GONE);
-    }
-
-    private void setPointInterestMarkerInvisible() {
-        for (int i = 0; i < markersInterest.size(); i++) {
-            markersInterest.get(i).setVisible(false);
-        }
     }
 
     private void setMapListener() {
@@ -282,7 +282,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 favoriteButton.setEnabled(false);
                 favoriteButton.setChecked(false);
 
-                setPointInterestMarkerInvisible();
+                pointOfInterestMarker.setPointInterestMarkerInvisible(markersInterest);
             }
         });
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
@@ -291,79 +291,35 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             {
                 if(!isTerminalSelected)
                 {
-                    deleteAllTerminalMarker();
+                    electricalTerminalMarker.deleteAllTerminalMarker(markersTerminal);
                     initiateSetTerminalNodes();
                     if (markersInterest.size() > 0) {
-                        deleteAllInterestMarker();
+                        pointOfInterestMarker.deleteAllInterestMarker(markersInterest);
                     }
                 }
             }
         });
     }
 
-    private void moveCamera(LatLng newPosition){
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPosition, INITIAL_ZOOM));
+    private void moveCamera(LatLng newPosition, float zoom){
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPosition, zoom));
     }
 
-    private void deleteAllInterestMarker() {
-        for (int i = markersInterest.size()-1; i >= 0; i--) {
-            markersInterest.get(i).remove();
-        }
-        markersInterest.clear();
-    }
-
-    private void deleteAllTerminalMarker() {
-        for (int i = markersTerminal.size()-1; i >= 0; i--) {
-            markersTerminal.get(i).remove();
-        }
-        markersTerminal.clear();
-    }
-
-    private void setPointOfInterestNodes()
-    {
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(getCurrentPosition(), mMap.getCameraPosition().zoom));
-        deleteAllInterestMarker();
-        List<PointOfInterest> pointOfInterests = pointOfInterestRepository.readByPosition(getCurrentPosition());
-        for (int i = 0; i < pointOfInterests.size(); i++) {
-            try {
-                LatLng pointInterestPosition = new LatLng(pointOfInterests.get(i).getLatitude(),
-                        pointOfInterests.get(i).getLongitude());
-
-                String title = pointOfInterests.get(i).getName();
-                markersInterest.add(mMap.addMarker(new MarkerOptions()
-                        .position(pointInterestPosition)
-                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_point_of_interest))
-                        .title(title)));
-            }
-            catch (NumberFormatException e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void setElectricalTerminalNodes(List<ElectricalTerminal> electricalTerminals)
-    {
-        for (int i = 0; i < electricalTerminals.size(); i++) {
-            try {
-                LatLng electricalTerminalPosition = new LatLng(electricalTerminals.get(i).getLatitude(),
-                        electricalTerminals.get(i).getLongitude());
-
-                CreateMarkerTerminal(electricalTerminalPosition, electricalTerminals.get(i).getName());
-            }
-            catch (NumberFormatException e)
-            {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void CreateMarkerTerminal(LatLng markerPosition, String title) {
-        markersTerminal.add(mMap.addMarker(new MarkerOptions()
-                .position(markerPosition)
-                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_electrical_terminal))
-                .title(title)));
-    }
+//    private void setElectricalTerminalNodes(List<ElectricalTerminal> electricalTerminals)
+//    {
+//        for (int i = 0; i < electricalTerminals.size(); i++) {
+//            try {
+//                LatLng electricalTerminalPosition = new LatLng(electricalTerminals.get(i).getLatitude(),
+//                        electricalTerminals.get(i).getLongitude());
+//
+//                electricalTerminalMarker.CreateMarkerTerminal(electricalTerminalPosition, electricalTerminals.get(i).getName(), mMap);
+//            }
+//            catch (NumberFormatException e)
+//            {
+//                e.printStackTrace();
+//            }
+//        }
+//    }
 
     private LatLng getCurrentPosition() {
         return new LatLng(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude);
@@ -378,7 +334,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onParsePointOfInterestComplete()
     {
-        setPointOfInterestNodes();
+        pointOfInterestMarker.setPointOfInterestNodes(mMap, markersInterest, pointOfInterestRepository);
     }
 
     public void onFavoriteButtonClick(View view) {
@@ -416,7 +372,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 isTerminalSelected = true;
                 indexSelectedTerminal = i;
 
-                setPointOfInterestNodes();
+                pointOfInterestMarker.setPointOfInterestNodes(mMap, markersInterest, pointOfInterestRepository);
                 return true;
             }
         }
@@ -430,7 +386,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 isTerminalSelected = true;
                 indexSelectedTerminal = i;
 
-                setPointOfInterestNodes();
+                pointOfInterestMarker.setPointOfInterestNodes(mMap, markersInterest, pointOfInterestRepository);
                 return true;
             }
         }
@@ -439,7 +395,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onGetTerminalToShowFromRepositoryComplete(List<ElectricalTerminal> electricalTerminals) {
-        setElectricalTerminalNodes(electricalTerminals);
+        electricalTerminalMarker.setElectricalTerminalNodes(electricalTerminals, this);
+    }
+
+    public void CreateMarkerTerminal(LatLng markerPosition, String title) {
+        markersTerminal.add(mMap.addMarker(new MarkerOptions()
+                .position(markerPosition)
+                .icon(BitmapDescriptorFactory.fromResource(com.example.mobile1_tp3.R.mipmap.ic_electrical_terminal))
+                .title(title)));
     }
 
     public void initiateSetTerminalNodes() {
