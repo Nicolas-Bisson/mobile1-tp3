@@ -1,18 +1,17 @@
-package com.example.mobile1_tp3.electricalTerminals;
+package com.example.mobile1_tp3.Model.electricalTerminals;
 
-public class ElectricalTerminalTable {
+public class FavoriteTerminalTable {
 
     public static final String CREATE = "" +
-            "CREATE TABLE IF NOT EXISTS electricalTerminals (\n" +
+            "CREATE TABLE IF NOT EXISTS favoriteTerminals (\n" +
             "    id         INTEGER     PRIMARY KEY     AUTOINCREMENT,\n" +
             "    name       VARCHAR(10),\n" +
             "    latitude   REAL,\n" +
-            "    longitude  REAL,\n" +
-            "    UNIQUE(latitude, longitude)\n" +
+            "    longitude  REAL\n" +
             ");";
 
     public static final String INSERT = "" +
-            "INSERT INTO electricalTerminals (\n" +
+            "INSERT INTO favoriteTerminals (\n" +
             "    name,\n" +
             "    latitude,\n" +
             "    longitude\n" +
@@ -24,20 +23,20 @@ public class ElectricalTerminalTable {
 
     public static final String SELECT_ALL = "" +
             "SELECT id, name, latitude, longitude\n" +
-            "FROM electricalTerminals;";
+            "FROM favoriteTerminals;";
 
     public static final String SELECT_BY_ID = "" +
             "SELECT name, latitude, longitude\n" +
-            "FROM electricalTerminals\n" +
+            "FROM favoriteTerminals\n" +
             "WHERE id = ?;";
 
     public static final String SELECT_BY_POSITION = "" +
             "SELECT id, name, latitude, longitude\n" +
-            "FROM electricalTerminals\n" +
+            "FROM favoriteTerminals\n" +
             "WHERE (latitude BETWEEN ? AND ?) AND (longitude BETWEEN ? AND ?);";
 
     public static final  String UPDATE = "" +
-            "UPDATE electricalTerminals\n" +
+            "UPDATE favoriteTerminals\n" +
             "SET \n" +
             "    name = ?,\n" +
             "    latitude = ?,\n" +
@@ -46,13 +45,13 @@ public class ElectricalTerminalTable {
             "    id = ?;";
 
     public static final String DELETE = "" +
-            "DELETE FROM electricalTerminals\n" +
-            "WHERE id = ?;";
+            "DELETE FROM favoriteTerminals\n" +
+            "WHERE name = ?;";
 
     public static final String DROP = "" +
-            "DROP TABLE IF EXISTS electricalTerminals";
+            "DROP TABLE IF EXISTS favoriteTerminals";
 
-    private ElectricalTerminalTable() {
+    private FavoriteTerminalTable() {
         //Private for static class
     }
 }

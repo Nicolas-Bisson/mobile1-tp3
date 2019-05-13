@@ -4,8 +4,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.mobile1_tp3.pointsOfInterest.PointOfInterest;
-import com.example.mobile1_tp3.pointsOfInterest.PointOfInterestTable;
+import com.example.mobile1_tp3.Model.pointsOfInterest.PointOfInterest;
+import com.example.mobile1_tp3.Model.pointsOfInterest.PointOfInterestTable;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;

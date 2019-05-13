@@ -1,4 +1,4 @@
-package com.example.mobile1_tp3.pointsOfInterest;
+package com.example.mobile1_tp3.Model.pointsOfInterest;
 
 public class PointOfInterestTable {
 
