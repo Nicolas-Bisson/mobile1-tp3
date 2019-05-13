@@ -13,8 +13,7 @@ public interface MarkerRepository<T> {
     T readById(long id);
 
     List<T> readAll();
-
-    //
+    
     List<T> readByPosition(LatLng currentPosition);
 
     void update(T item);

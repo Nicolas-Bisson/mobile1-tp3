@@ -17,26 +17,26 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 @RunWith(AndroidJUnit4.class)
-public class ElectricalTerminalRepositoryTest {
+public class FavoriteTerminalRepositoryTest {
 
-    private ElectricalTerminalRepository repository;
+    private FavoriteTerminalRepository repository;
 
     @Before
     public void before() {
         DbConnectionFactory database = new DbConnectionFactory(InstrumentationRegistry.getTargetContext());
         database.onUpgrade(database.getWritableDatabase(), DbConnectionFactory.DB_VERSION, DbConnectionFactory.DB_VERSION);
 
-        repository = new ElectricalTerminalRepository(database.getWritableDatabase());
+        repository = new FavoriteTerminalRepository(database.getWritableDatabase());
     }
 
     @Test
-    public void canAddNewTerminal() {
+    public void canAddNewFavoriteTerminal() {
         ElectricalTerminal terminal = new ElectricalTerminal("terminal", 50.0, 50.0);
 
         repository.create(terminal);
 
         List<ElectricalTerminal> terminals = repository.readAll();
-        assertEquals("No terminal inserted", 1, terminals.size());
+        assertEquals("No favorite terminal inserted", 1, terminals.size());
 
         ElectricalTerminal insertedTerminal = terminals.get(0);
         assertEquals("Names aren't Equals", "terminal", insertedTerminal.getName());
@@ -45,7 +45,7 @@ public class ElectricalTerminalRepositoryTest {
     }
 
     @Test
-    public void canAddMultipleTerminals() {
+    public void canAddMultipleFavoriteTerminals() {
         ElectricalTerminal terminal = new ElectricalTerminal("terminal", 50.0, 50.0);
         ElectricalTerminal terminal2 = new ElectricalTerminal("terminal2", 5.0, 5.0);
 
@@ -53,19 +53,7 @@ public class ElectricalTerminalRepositoryTest {
         repository.create(terminal2);
 
         List<ElectricalTerminal> terminals = repository.readAll();
-        assertEquals("Not all terminals were inserted", 2, terminals.size());
-    }
-
-    @Test
-    public void cannotAddMultipleTerminalsAtSamePosition() {
-        ElectricalTerminal terminal = new ElectricalTerminal("terminal", 50.0, 50.0);
-        ElectricalTerminal terminal2 = new ElectricalTerminal("terminal2", 50.0, 50.0);
-
-        repository.create(terminal);
-        repository.create(terminal2);
-
-        List<ElectricalTerminal> terminals = repository.readAll();
-        assertEquals("Terminal unique position constraint was not followed", 1, terminals.size());
+        assertEquals("Not all favorite terminals were inserted", 2, terminals.size());
     }
 
     @Test
@@ -74,16 +62,16 @@ public class ElectricalTerminalRepositoryTest {
 
         repository.create(terminal);
 
-        assertNotNull("Terminal id is null.", terminal.getId());
+        assertNotNull("Favorite terminal id is null.", terminal.getId());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void cantInsertNullTerminal() {
+    public void cantInsertNullFavoriteTerminal() {
         repository.create(null);
     }
 
     @Test
-    public void canReadTerminalWithId() {
+    public void canReadFavoriteTerminalWithId() {
         ElectricalTerminal terminal = new ElectricalTerminal("terminal", 50.0, 50.0);
 
         repository.create(terminal);
@@ -96,14 +84,14 @@ public class ElectricalTerminalRepositoryTest {
     }
 
     @Test
-    public void cantReadTerminalWithUnexistingId() {
+    public void cantReadFavoriteTerminalWithUnexistingId() {
         ElectricalTerminal terminal = repository.readById(1);
 
         assertNull("Can get unexisting id", terminal);
     }
 
     @Test
-    public void canReadMultipleTerminals() {
+    public void canReadMultipleFavoriteTerminals() {
         ElectricalTerminal terminal = new ElectricalTerminal("terminal", 50.0, 50.0);
         ElectricalTerminal terminal2 = new ElectricalTerminal("terminal2", 5.0, 5.0);
 
@@ -124,7 +112,7 @@ public class ElectricalTerminalRepositoryTest {
     }
 
     @Test
-    public void canReadTerminalOnPosition() {
+    public void canReadFavoriteTerminalOnPosition() {
         LatLng position = new LatLng(50.0, 50.0);
 
         ElectricalTerminal terminal = new ElectricalTerminal("terminal", 50.0, 50.0);
@@ -136,7 +124,7 @@ public class ElectricalTerminalRepositoryTest {
     }
 
     @Test
-    public void canReadTerminalCloseToPosition() {
+    public void canReadFavoriteTerminalCloseToPosition() {
         LatLng position = new LatLng(49.99, 49.99);
 
         ElectricalTerminal terminal = new ElectricalTerminal("terminal", 50.0, 50.0);
@@ -148,7 +136,7 @@ public class ElectricalTerminalRepositoryTest {
     }
 
     @Test
-    public void canReadTerminalAtMaxDetectionRange() {
+    public void canReadFavoriteTerminalAtMaxDetectionRange() {
         LatLng position = new LatLng(50.0 - MarkerRepository.DETECTION_RANGE, 50.0 - MarkerRepository.DETECTION_RANGE);
 
         ElectricalTerminal terminal = new ElectricalTerminal("terminal", 50.0, 50.0);
@@ -160,7 +148,7 @@ public class ElectricalTerminalRepositoryTest {
     }
 
     @Test
-    public void cantReadTerminalOverMaxDetectionRange() {
+    public void cantReadFavoriteTerminalOverMaxDetectionRange() {
         LatLng position = new LatLng(50.0 - MarkerRepository.DETECTION_RANGE - 0.01, 50.0 - MarkerRepository.DETECTION_RANGE - 0.01);
 
         ElectricalTerminal terminal = new ElectricalTerminal("terminal", 50.0, 50.0);
@@ -172,7 +160,7 @@ public class ElectricalTerminalRepositoryTest {
     }
 
     @Test
-    public void canReadMultipleTerminalInDetectionRange() {
+    public void canReadMultipleFavoriteTerminalInDetectionRange() {
         LatLng position = new LatLng(50.0, 50.0);
 
         ElectricalTerminal terminal = new ElectricalTerminal("terminal", 50.0, 50.0);
@@ -186,7 +174,7 @@ public class ElectricalTerminalRepositoryTest {
     }
 
     @Test
-    public void canUpdateTerminalInformation() {
+    public void canUpdateFavoriteTerminalInformation() {
 
         ElectricalTerminal terminal = new ElectricalTerminal("terminal", 50.0, 50.0);
 
