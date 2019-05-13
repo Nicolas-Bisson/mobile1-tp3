@@ -14,6 +14,14 @@ public class ElectricalTerminal
         this.longitude = longitude;
     }
 
+    public ElectricalTerminal(Long id, String name, Double latitude, Double longitude)
+    {
+        this.id = id;
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
     public String getName()
     {
         return name;

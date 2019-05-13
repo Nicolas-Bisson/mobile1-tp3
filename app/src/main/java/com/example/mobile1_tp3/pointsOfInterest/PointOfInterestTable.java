@@ -5,7 +5,7 @@ public class PointOfInterestTable {
     public static final String CREATE = "" +
             "CREATE TABLE IF NOT EXISTS pointsOfInterest (\n" +
             "    id         INTEGER     PRIMARY KEY     AUTOINCREMENT,\n" +
-            "    name       VARCHAR(30) UNIQUE,\n" +
+            "    name       VARCHAR(30),\n" +
             "    latitude   REAL,\n" +
             "    longitude  REAL\n" +
             ");";
@@ -22,16 +22,16 @@ public class PointOfInterestTable {
             ");";
 
     public static final String SELECT_ALL = "" +
-            "SELECT name, latitude, longitude\n" +
+            "SELECT id, name, latitude, longitude\n" +
             "FROM pointsOfInterest;";
 
-    public static final String SELECT_BY_NAME = "" +
-            "SELECT latitude, longitude\n" +
+    public static final String SELECT_BY_ID = "" +
+            "SELECT name, latitude, longitude\n" +
             "FROM pointsOfInterest\n" +
-            "WHERE name = ?;";
+            "WHERE id = ?;";
 
     public static final String SELECT_BY_POSITION = "" +
-            "SELECT name, latitude, longitude\n" +
+            "SELECT id, name, latitude, longitude\n" +
             "FROM pointsOfInterest\n" +
             "WHERE (latitude BETWEEN ? AND ?) AND (longitude BETWEEN ? AND ?);";
 
@@ -42,7 +42,7 @@ public class PointOfInterestTable {
             "    latitude = ?,\n" +
             "    longitude = ?\n" +
             "WHERE\n" +
-            "    name = ?;";
+            "    id = ?;";
 
     public static final String DELETE = "" +
             "DELETE FROM pointsOfInterest\n" +

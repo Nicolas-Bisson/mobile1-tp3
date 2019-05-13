@@ -9,7 +9,7 @@ import com.example.mobile1_tp3.pointsOfInterest.PointOfInterestTable;
 public class DbConnectionFactory extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "Database";
-    public static final int DB_VERSION = 16;
+    public static final int DB_VERSION = 20;
 
 
     public DbConnectionFactory(Context context) { super(context, DB_NAME, null, DB_VERSION);
