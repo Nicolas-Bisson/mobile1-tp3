@@ -122,9 +122,10 @@ public class PointOfInterestRepository implements MarkerRepository<PointOfIntere
     @Override
     public void update(PointOfInterest pointOfInterest) {
         try (Cursor cursor = database.rawQuery(PointOfInterestTable.UPDATE, new String[]{
+                pointOfInterest.getName(),
                 String.valueOf(pointOfInterest.getLatitude()),
                 String.valueOf(pointOfInterest.getLongitude()),
-                pointOfInterest.getName()
+                String.valueOf(pointOfInterest.getId())
         })) {
             cursor.moveToNext(); //Update database.
 

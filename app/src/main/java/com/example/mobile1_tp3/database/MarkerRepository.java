@@ -14,6 +14,7 @@ public interface MarkerRepository<T> {
 
     List<T> readAll();
 
+    //
     List<T> readByPosition(LatLng currentPosition);
 
     void update(T item);

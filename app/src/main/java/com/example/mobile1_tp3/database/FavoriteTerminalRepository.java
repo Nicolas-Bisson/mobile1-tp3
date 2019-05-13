@@ -121,9 +121,10 @@ public class FavoriteTerminalRepository implements MarkerRepository<ElectricalTe
     @Override
     public void update(ElectricalTerminal electricalTerminal) {
         try (Cursor cursor = database.rawQuery(FavoriteTerminalTable.UPDATE, new String[]{
+                electricalTerminal.getName(),
                 String.valueOf(electricalTerminal.getLatitude()),
                 String.valueOf(electricalTerminal.getLongitude()),
-                electricalTerminal.getName()
+                String.valueOf(electricalTerminal.getId())
         })) {
             cursor.moveToNext(); //Update database.
 
