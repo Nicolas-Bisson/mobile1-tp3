@@ -3,8 +3,8 @@ package com.example.mobile1_tp3.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.example.mobile1_tp3.electricalTerminals.ElectricalTerminalTable;
-import com.example.mobile1_tp3.pointsOfInterest.PointOfInterestTable;
+import com.example.mobile1_tp3.Model.electricalTerminals.ElectricalTerminalTable;
+import com.example.mobile1_tp3.Model.pointsOfInterest.PointOfInterestTable;
 
 public class DbConnectionFactory extends SQLiteOpenHelper {
 

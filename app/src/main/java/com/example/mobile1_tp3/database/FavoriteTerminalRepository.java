@@ -4,8 +4,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.example.mobile1_tp3.electricalTerminals.ElectricalTerminal;
-import com.example.mobile1_tp3.electricalTerminals.FavoriteTerminalTable;
+import com.example.mobile1_tp3.Model.electricalTerminals.ElectricalTerminal;
+import com.example.mobile1_tp3.Model.electricalTerminals.FavoriteTerminalTable;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;

@@ -1,30 +1,25 @@
-package com.example.mobile1_tp3.electricalTerminals;
+package com.example.mobile1_tp3.Model.pointsOfInterest;
 
-public class ElectricalTerminal
+public class PointOfInterest
 {
     private Long id;
     private String name;
     private Double latitude;
     private Double longitude;
 
-    public ElectricalTerminal(String name, Double latitude, Double longitude)
+    public PointOfInterest(String name, Double latitude, Double longitude)
     {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public ElectricalTerminal(Long id, String name, Double latitude, Double longitude)
+    public PointOfInterest(Long id, String name, Double latitude, Double longitude)
     {
         this.id = id;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
-    }
-
-    public String getName()
-    {
-        return name;
     }
 
     public Long getId() {
@@ -35,7 +30,20 @@ public class ElectricalTerminal
         this.id = id;
     }
 
-    public void setName(String nomBorne) { this.name = nomBorne; }
+    public PointOfInterest(String name)
+    {
+        this.name = name;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
 
     public Double getLatitude()
     {
@@ -56,6 +64,5 @@ public class ElectricalTerminal
     {
         this.longitude = longitude;
     }
-
 }
 

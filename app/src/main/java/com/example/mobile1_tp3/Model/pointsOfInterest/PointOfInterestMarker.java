@@ -1,4 +1,4 @@
-package com.example.mobile1_tp3.pointsOfInterest;
+package com.example.mobile1_tp3.Model.pointsOfInterest;
 
 import com.example.mobile1_tp3.database.PointOfInterestRepository;
 import com.google.android.gms.maps.CameraUpdateFactory;

@@ -1,4 +1,4 @@
-package com.example.mobile1_tp3.electricalTerminals;
+package com.example.mobile1_tp3.Model.electricalTerminals;
 
 import com.example.mobile1_tp3.database.ElectricalTerminalRepository;
 
