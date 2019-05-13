@@ -112,12 +112,16 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         favoriteTerminalRepository = new FavoriteTerminalRepository(Database);
 
         try {
-            final InputStream FILE_ELECTRICAL_TERMINAL = this.getResources().openRawResource(R.raw.bornes);
-            AsyncParseElectricalTerminal asyncParserElectricalTerminal = new AsyncParseElectricalTerminal(this, terminalRepository);
-            asyncParserElectricalTerminal.execute(FILE_ELECTRICAL_TERMINAL);
-            final InputStream[] FILE_POINT_OF_INTEREST = new InputStream[]{this.getResources().openRawResource(R.raw.attraitsinfo), this.getResources().openRawResource(R.raw.attraitsadresse)};
-            AsyncParsePointOfInterest asyncParsePointOfInterest = new AsyncParsePointOfInterest(this, pointOfInterestRepository);
-            asyncParsePointOfInterest.execute(FILE_POINT_OF_INTEREST);
+            if (terminalRepository.readAll().size() == 0) {
+                final InputStream FILE_ELECTRICAL_TERMINAL = this.getResources().openRawResource(R.raw.bornes);
+                AsyncParseElectricalTerminal asyncParserElectricalTerminal = new AsyncParseElectricalTerminal(this, terminalRepository);
+                asyncParserElectricalTerminal.execute(FILE_ELECTRICAL_TERMINAL);
+            }
+            if (pointOfInterestRepository.readAll().size() == 0) {
+                final InputStream[] FILE_POINT_OF_INTEREST = new InputStream[]{this.getResources().openRawResource(R.raw.attraitsinfo), this.getResources().openRawResource(R.raw.attraitsadresse)};
+                AsyncParsePointOfInterest asyncParsePointOfInterest = new AsyncParsePointOfInterest(this, pointOfInterestRepository);
+                asyncParsePointOfInterest.execute(FILE_POINT_OF_INTEREST);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
