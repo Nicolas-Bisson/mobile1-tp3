@@ -70,6 +70,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //widgets
     private EditText searchText;
+    private List<ElectricalTerminal> listCurrentTerminals;
     private ArrayList<Marker> markersTerminal;
     private ArrayList<Marker> markersInterest;
     private ArrayList<Marker> markersFavorite;
@@ -355,7 +356,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .title(terminalName)));
 
         markersTerminal.get(indexSelectedTerminal).remove();
-        terminalRepository.delete(terminalName);
+        terminalRepository.delete(listCurrentTerminals.get(indexSelectedTerminal).getId());
         onMarkerClick(markersFavorite.get(markersFavorite.size()-1));
     }
 
@@ -401,6 +402,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onGetTerminalToShowFromRepositoryComplete(List<ElectricalTerminal> electricalTerminals) {
+        listCurrentTerminals = electricalTerminals;
         electricalTerminalMarker.setElectricalTerminalNodes(electricalTerminals, this);
     }
 

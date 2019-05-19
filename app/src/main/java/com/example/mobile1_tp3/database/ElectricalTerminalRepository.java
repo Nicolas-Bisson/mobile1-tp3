@@ -134,14 +134,18 @@ public class ElectricalTerminalRepository implements MarkerRepository<Electrical
         }
     }
 
-    @Override
-    public void delete(String name) {
-        try (Cursor cursor = database.rawQuery(ElectricalTerminalTable.DELETE, new String[]{name})) {
+    public void delete(long id) {
+        try (Cursor cursor = database.rawQuery(ElectricalTerminalTable.DELETE, new String[]{String.valueOf(id)})) {
             cursor.moveToNext(); //Delete from database.
 
             database.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void delete(String name) {
+
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 
 public class ElectricalTerminalMarker{
 
+
     public void deleteAllTerminalMarker(List<Marker> markersTerminal) {
         for (int i = markersTerminal.size()-1; i >= 0; i--) {
             markersTerminal.get(i).remove();
