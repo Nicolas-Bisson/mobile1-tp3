@@ -27,12 +27,13 @@ public enum ParsePointOfInterest
     {
         this.pointOfInterestRepository = pointOfInterestRepository;
         pointOfInterests = new TreeMap<>();
-        chargerCSVInfo(inputStreamInfo);
-        chargerCSVAdresse(inputStreamAddress);
+        chargeCSVInfo(inputStreamInfo);
+        chargeCSVAdress(inputStreamAddress);
         pointOfInterests.clear();
         System.out.println("");
     }
-    private boolean chargerCSVInfo(InputStream inputStreamInfo)
+
+    public boolean chargeCSVInfo(InputStream inputStreamInfo)
     {
         try
         {
@@ -59,7 +60,8 @@ public enum ParsePointOfInterest
             return false;
         }
     }
-    private boolean chargerCSVAdresse(InputStream inputStreamAddress)
+
+    public boolean chargeCSVAdress(InputStream inputStreamAddress)
     {
         try
         {
