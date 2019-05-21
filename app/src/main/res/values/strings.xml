@@ -6,6 +6,7 @@
     <string name="app_name">The Electrical Break</string>
     <string name="title_activity_maps">Map</string>
     <string name="enter_city_name">Enter city name</string>
-    <string name="refused_Location_Permission_Message">Your position will not be taken into account, it will be automatically set on Quebec City</string>
-    <string name="Accepted_Location_Permission_Message">Localisation permission already granted</string>
+    <string name="refused_location_permission_message">Your position will not be taken into account, it will be automatically set on Quebec City</string>
+    <string name="accepted_location_permission_message">Localisation permission already granted</string>
+    <string name="favorite_button_text">Favorite</string>
 </resources>

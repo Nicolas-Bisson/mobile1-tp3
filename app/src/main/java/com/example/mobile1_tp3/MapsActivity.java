@@ -1,5 +1,6 @@
 package com.example.mobile1_tp3;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,8 +10,8 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -24,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
 import com.example.mobile1_tp3.database.DbConnectionFactory;
 import com.example.mobile1_tp3.database.ElectricalTerminalRepository;
 import com.example.mobile1_tp3.database.FavoriteTerminalRepository;
@@ -59,7 +61,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final LatLng QUEBEC_POSITION = new LatLng(46.829853, -71.254028);
     private static final int LOCATION_PERMISSION_REQUEST = 1;
 
-    private SQLiteDatabase database;
     private ElectricalTerminalRepository terminalRepository;
     private PointOfInterestRepository pointOfInterestRepository;
     private FavoriteTerminalRepository favoriteTerminalRepository;
@@ -83,6 +84,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ToggleButton favoriteButton;
 
     private boolean isPermissionGranted = false;
+    private double latBeforeRot;
+    private double longBeforeRot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,11 +109,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         rootView = findViewById(R.id.rootView);
         DbConnectionFactory connectionFactory = new DbConnectionFactory(this);
-        database = connectionFactory.getWritableDatabase();
 
-        terminalRepository = new ElectricalTerminalRepository(database);
-        pointOfInterestRepository = new PointOfInterestRepository(database);
-        favoriteTerminalRepository = new FavoriteTerminalRepository(database);
+        terminalRepository = new ElectricalTerminalRepository(connectionFactory.getWritableDatabase());
+        pointOfInterestRepository = new PointOfInterestRepository(connectionFactory.getWritableDatabase());
+        favoriteTerminalRepository = new FavoriteTerminalRepository(connectionFactory.getWritableDatabase());
 
         try {
             if (terminalRepository.readAll().size() == 0) {
@@ -139,40 +141,53 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             mapFragment.getMapAsync(this);
         }
 
-        searchText = (EditText) findViewById(R.id.searchText);
+        searchText = findViewById(R.id.searchText);
+
         isTerminalSelected = false;
         indexSelectedTerminal = 0;
+
+        latBeforeRot = 0;
+        longBeforeRot = 0;
 
         providerClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
-    private void askForDeviceLocationPermission() {
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("latBeforeRot", String.valueOf(getCurrentPosition().latitude));
+        outState.putString("longBeforeRot", String.valueOf(getCurrentPosition().longitude));
+    }
 
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        latBeforeRot = Double.valueOf(savedInstanceState.getString("latBeforeRot"));
+        longBeforeRot = Double.valueOf(savedInstanceState.getString("longBeforeRot"));
+    }
+
+    private void askForDeviceLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) &&
                     ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
 
-                Snackbar.make(rootView, getString(R.string.refused_Location_Permission_Message), Snackbar.LENGTH_LONG).show();
+                Snackbar.make(rootView, getString(R.string.refused_location_permission_message), Snackbar.LENGTH_LONG).show();
             } else {
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        LOCATION_PERMISSION_REQUEST);
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                         LOCATION_PERMISSION_REQUEST);
             }
         }
-        Snackbar.make(rootView, getString(R.string.Accepted_Location_Permission_Message), Snackbar.LENGTH_LONG).show();
+        Snackbar.make(rootView, getString(R.string.accepted_location_permission_message), Snackbar.LENGTH_LONG).show();
         isPermissionGranted = true;
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[],
-                                           int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         isPermissionGranted = false;
 
         switch (requestCode) {
@@ -181,37 +196,43 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     isPermissionGranted = true;
                 } else {
-                    Snackbar.make(rootView, getString(R.string.refused_Location_Permission_Message), Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(rootView, getString(R.string.refused_location_permission_message), Snackbar.LENGTH_LONG).show();
                 }
-                return;
             }
         }
     }
 
+    @SuppressLint("MissingPermission")
     private void moveCameraToDevicePosition() {
 
         //Permission verification
+        if (checkDeviceLocationPermission()){
+            providerClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location deviceLocation) {
+
+                            if (deviceLocation != null) {
+                                moveCamera(new LatLng(
+                                        deviceLocation.getLatitude(),
+                                        deviceLocation.getLongitude()));
+                            } else {
+                                moveCamera(QUEBEC_POSITION);
+                            }
+                        }
+                    });
+        }
+        else
+            moveCamera(QUEBEC_POSITION);
+    }
+
+    private boolean checkDeviceLocationPermission() {
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 isPermissionGranted) {
-            moveCamera(QUEBEC_POSITION);
-            return;
+            return false;
         }
-
-        providerClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location deviceLocation) {
-
-                        if (deviceLocation != null) {
-                            moveCamera(new LatLng(
-                                    deviceLocation.getLatitude(),
-                                    deviceLocation.getLongitude()));
-                        } else {
-                            moveCamera(QUEBEC_POSITION);
-                        }
-                    }
-                });
+        return false;
     }
 
     @Override
@@ -265,7 +286,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         askForDeviceLocationPermission();
-        moveCameraToDevicePosition();
+        if (latBeforeRot == 0 && longBeforeRot == 0)
+            moveCameraToDevicePosition();
+        else
+            moveCamera(new LatLng(latBeforeRot, longBeforeRot));
 
         setListenerOnCitySearch();
         pointOfInterestMarker.setPointInterestMarkerInvisible(markersInterest);
@@ -378,9 +402,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public boolean onMarkerClick(final Marker marker) {
 
-        if (isElectricalTerminalClicked(marker)) return true;
-        else if (isFavoriteTerminalClicked(marker)) return true;
-        else return false;
+        if (isElectricalTerminalClicked(marker))
+            return true;
+        else
+            return  (isFavoriteTerminalClicked(marker));
     }
 
     private boolean isFavoriteTerminalClicked(Marker marker) {

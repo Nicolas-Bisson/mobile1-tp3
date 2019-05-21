@@ -20,7 +20,8 @@ public enum ParseElectricalTerminal
         loadElectricalTerminalCSV(inputStream, terminalRepository);
         System.out.println("");
     }
-    private boolean loadElectricalTerminalCSV(InputStream inputStream, ElectricalTerminalRepository terminalRepository)
+
+    public boolean loadElectricalTerminalCSV(InputStream inputStream, ElectricalTerminalRepository terminalRepository)
     {
         try
         {
