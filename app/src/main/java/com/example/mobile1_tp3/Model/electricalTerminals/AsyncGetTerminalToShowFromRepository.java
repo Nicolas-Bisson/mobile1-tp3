@@ -13,6 +13,9 @@ public class AsyncGetTerminalToShowFromRepository extends AsyncTask<ElectricalTe
     private LatLng cameraPosition;
 
     public AsyncGetTerminalToShowFromRepository(Listener listener, LatLng cameraPosition) {
+        if (listener == null) {
+            throw new IllegalArgumentException("listener doesn't exist");
+        }
         this.listener = listener;
         this.cameraPosition = cameraPosition;
     }

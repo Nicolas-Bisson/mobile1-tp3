@@ -13,6 +13,7 @@ public enum ParseElectricalTerminal {
     public static final int NAME_ROW = 0;
     public static final int LATITUDE_ROW = 4;
     public static final int LONGITUDE_ROW = 5;
+    public static final String CHARSET_NAME = "ISO-8859-1";
 
     public void Parse(InputStream inputStream, ElectricalTerminalRepository terminalRepository) {
         loadElectricalTerminalCSV(inputStream, terminalRepository);
@@ -21,40 +22,43 @@ public enum ParseElectricalTerminal {
 
     public boolean loadElectricalTerminalCSV(InputStream inputStream, ElectricalTerminalRepository terminalRepository) {
         try {
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "ISO-8859-1"));
-            String ligne = bufferedReader.readLine();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, CHARSET_NAME));
+            String line = bufferedReader.readLine();
             ArrayList<String> subString;
             int countForReplacements = 0;
 
-            while (ligne != null) {
+            while (line != null) {
                 countForReplacements = 0;
-                boolean containQuotes = ligne.contains("\"");
+                boolean containQuotes = line.contains("\"");
                 subString = new ArrayList<>();
-                while (ligne.contains("\"")) {
-                    int positionFirstQuote = ligne.indexOf('\"');
-                    subString.add(ligne.substring(positionFirstQuote, ligne.indexOf('\"', positionFirstQuote + 1) + 1));
-                    ligne = ligne.replace(subString.get(countForReplacements), "=" + countForReplacements);
+
+                //Get the quote
+                while (line.contains("\"")) {
+                    int positionFirstQuote = line.indexOf('\"');
+                    subString.add(line.substring(positionFirstQuote, line.indexOf('\"', positionFirstQuote + 1) + 1));
+                    line = line.replace(subString.get(countForReplacements), "=" + countForReplacements);
                     countForReplacements++;
                 }
-                ligne = ligne.replace(',', '/');
+                line = line.replace(',', '/');
                 countForReplacements = 0;
-                while (containQuotes && ligne.contains("=")) {
-                    ligne = ligne.replace("=" + countForReplacements, subString.get(countForReplacements));
+
+                while (containQuotes && line.contains("=")) {
+                    line = line.replace("=" + countForReplacements, subString.get(countForReplacements));
                     countForReplacements++;
                 }
-                String[] info = ligne.split("/");
+                String[] info = line.split("/");
                 try {
                     terminalRepository.create(new ElectricalTerminal(info[NAME_ROW], Double.parseDouble(info[LATITUDE_ROW]), Double.parseDouble(info[LONGITUDE_ROW])));
                 } catch (NumberFormatException ex) {
-                    //ex.printStackTrace();
+                    ex.printStackTrace();
                 }
-                ligne = bufferedReader.readLine();
+                line = bufferedReader.readLine();
             }
 
             bufferedReader.readLine();
             return true;
         } catch (Exception e) {
-            System.out.println(e.toString());
+            e.printStackTrace();
             return false;
         }
     }
