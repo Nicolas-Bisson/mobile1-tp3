@@ -173,14 +173,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) &&
                     ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
 
-                Snackbar.make(rootView, getString(R.string.refused_Location_Permission_Message), Snackbar.LENGTH_LONG).show();
+                Snackbar.make(rootView, getString(R.string.refused_location_permission_message), Snackbar.LENGTH_LONG).show();
             } else {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
                         LOCATION_PERMISSION_REQUEST);
             }
         }
-        Snackbar.make(rootView, getString(R.string.Accepted_Location_Permission_Message), Snackbar.LENGTH_LONG).show();
+        Snackbar.make(rootView, getString(R.string.accepted_location_permission_message), Snackbar.LENGTH_LONG).show();
         isPermissionGranted = true;
     }
 
@@ -194,7 +194,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     isPermissionGranted = true;
                 } else {
-                    Snackbar.make(rootView, getString(R.string.refused_Location_Permission_Message), Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(rootView, getString(R.string.refused_location_permission_message), Snackbar.LENGTH_LONG).show();
                 }
             }
         }
