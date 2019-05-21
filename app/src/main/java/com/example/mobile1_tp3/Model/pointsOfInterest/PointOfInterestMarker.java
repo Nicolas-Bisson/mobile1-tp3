@@ -20,14 +20,13 @@ public class PointOfInterestMarker {
     }
 
     public void deleteAllInterestMarker(List<Marker> markersInterest) {
-        for (int i = markersInterest.size()-1; i >= 0; i--) {
+        for (int i = markersInterest.size() - 1; i >= 0; i--) {
             markersInterest.get(i).remove();
         }
         markersInterest.clear();
     }
 
-    public void setPointOfInterestNodes(GoogleMap mMap, List<Marker> markersInterest, PointOfInterestRepository pointOfInterestRepository)
-    {
+    public void setPointOfInterestNodes(GoogleMap mMap, List<Marker> markersInterest, PointOfInterestRepository pointOfInterestRepository) {
         LatLng currentPosition = new LatLng(mMap.getCameraPosition().target.latitude,
                 mMap.getCameraPosition().target.longitude);
 
@@ -45,9 +44,7 @@ public class PointOfInterestMarker {
                         .position(pointInterestPosition)
                         .icon(BitmapDescriptorFactory.fromResource(com.example.mobile1_tp3.R.mipmap.ic_point_of_interest))
                         .title(title)));
-            }
-            catch (NumberFormatException e)
-            {
+            } catch (NumberFormatException e) {
                 e.printStackTrace();
             }
         }

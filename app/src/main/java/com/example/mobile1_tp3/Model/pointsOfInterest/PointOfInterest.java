@@ -1,21 +1,18 @@
 package com.example.mobile1_tp3.Model.pointsOfInterest;
 
-public class PointOfInterest
-{
+public class PointOfInterest {
     private Long id;
     private String name;
     private Double latitude;
     private Double longitude;
 
-    public PointOfInterest(String name, Double latitude, Double longitude)
-    {
+    public PointOfInterest(String name, Double latitude, Double longitude) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
     }
 
-    public PointOfInterest(Long id, String name, Double latitude, Double longitude)
-    {
+    public PointOfInterest(Long id, String name, Double latitude, Double longitude) {
         this.id = id;
         this.name = name;
         this.latitude = latitude;
@@ -30,38 +27,31 @@ public class PointOfInterest
         this.id = id;
     }
 
-    public PointOfInterest(String name)
-    {
+    public PointOfInterest(String name) {
         this.name = name;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public Double getLatitude()
-    {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Double latitude)
-    {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public Double getLongitude()
-    {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Double longitude)
-    {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 }

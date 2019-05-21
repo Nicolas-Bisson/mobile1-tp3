@@ -6,15 +6,12 @@ import com.example.mobile1_tp3.database.PointOfInterestRepository;
 
 import java.io.InputStream;
 
-public class AsyncParsePointOfInterest extends AsyncTask<InputStream, Void, Void>
-{
+public class AsyncParsePointOfInterest extends AsyncTask<InputStream, Void, Void> {
     private final Listener listener;
     PointOfInterestRepository pointOfInterestRepository;
 
-    public AsyncParsePointOfInterest(Listener listener, PointOfInterestRepository pointOfInterestRepository)
-    {
-        if(listener == null)
-        {
+    public AsyncParsePointOfInterest(Listener listener, PointOfInterestRepository pointOfInterestRepository) {
+        if (listener == null) {
             throw new IllegalArgumentException("listener doesn't exist");
         }
         this.listener = listener;
@@ -22,15 +19,13 @@ public class AsyncParsePointOfInterest extends AsyncTask<InputStream, Void, Void
     }
 
     @Override
-    protected Void doInBackground(InputStream... inputStreams)
-    {
+    protected Void doInBackground(InputStream... inputStreams) {
         ParsePointOfInterest.Instance.Parse(inputStreams[0], inputStreams[1], pointOfInterestRepository);
         return null;
     }
 
     @Override
-    protected void onPostExecute(Void aVoid)
-    {
+    protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         listener.onParsePointOfInterestComplete();
     }
