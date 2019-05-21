@@ -18,6 +18,6 @@ public interface MarkerRepository<T> {
 
     void update(T item);
 
-    void delete(String name);
+    void delete(long id);
 
 }
