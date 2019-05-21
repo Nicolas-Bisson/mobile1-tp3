@@ -83,9 +83,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private View rootView;
     private ToggleButton favoriteButton;
 
-    private boolean isPermissionGranted = false;
-    private double latBeforeRot;
-    private double longBeforeRot;
+    LatLng cameraPositionBeforeRot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,8 +144,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         isTerminalSelected = false;
         indexSelectedTerminal = 0;
 
-        latBeforeRot = 0;
-        longBeforeRot = 0;
+        cameraPositionBeforeRot = new LatLng(0, 0);
 
         providerClient = LocationServices.getFusedLocationProviderClient(this);
     }
@@ -163,14 +160,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        latBeforeRot = Double.valueOf(savedInstanceState.getString("latBeforeRot"));
-        longBeforeRot = Double.valueOf(savedInstanceState.getString("longBeforeRot"));
+        double latBeforeRot = Double.valueOf(savedInstanceState.getString("latBeforeRot"));
+        double longBeforeRot = Double.valueOf(savedInstanceState.getString("longBeforeRot"));
+        cameraPositionBeforeRot = new LatLng(latBeforeRot, longBeforeRot);
     }
 
     private void askForDeviceLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+        if (!checkDeviceLocationPermission()) {
 
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) &&
                     ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
@@ -183,18 +179,14 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
         Snackbar.make(rootView, getString(R.string.accepted_location_permission_message), Snackbar.LENGTH_LONG).show();
-        isPermissionGranted = true;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        isPermissionGranted = false;
-
         switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    isPermissionGranted = true;
+                    Snackbar.make(rootView, getString(R.string.accepted_location_permission_message), Snackbar.LENGTH_LONG).show();
                 } else {
                     Snackbar.make(rootView, getString(R.string.refused_location_permission_message), Snackbar.LENGTH_LONG).show();
                 }
@@ -204,9 +196,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @SuppressLint("MissingPermission")
     private void moveCameraToDevicePosition() {
+        if (checkDeviceLocationPermission()) {
 
-        //Permission verification
-        if (checkDeviceLocationPermission()){
             providerClient.getLastLocation()
                     .addOnSuccessListener(this, new OnSuccessListener<Location>() {
                         @Override
@@ -221,15 +212,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                             }
                         }
                     });
-        }
-        else
+        } else
             moveCamera(QUEBEC_POSITION);
     }
 
     private boolean checkDeviceLocationPermission() {
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                isPermissionGranted) {
+                checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return false;
         }
         return false;
@@ -257,8 +246,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
     }
 
-    private void locateSearchedCity()
-    {
+    private void locateSearchedCity() {
         isTerminalSelected = false;
         String searchString = searchText.getText().toString();
 
@@ -267,10 +255,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         try {
             list = geocoder.getFromLocationName(searchString, 1);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
         if (list.size() > 0) {
             Address addressSearched = list.get(0);
             moveCamera(new LatLng(addressSearched.getLatitude(), addressSearched.getLongitude()));
@@ -286,10 +274,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         askForDeviceLocationPermission();
-        if (latBeforeRot == 0 && longBeforeRot == 0)
+        //Check if onMapReady call due to device rotation
+        if (cameraPositionBeforeRot.latitude == 0 && cameraPositionBeforeRot.longitude == 0)
             moveCameraToDevicePosition();
         else
-            moveCamera(new LatLng(latBeforeRot, longBeforeRot));
+            moveCamera(cameraPositionBeforeRot);
 
         setListenerOnCitySearch();
         pointOfInterestMarker.setPointInterestMarkerInvisible(markersInterest);
@@ -299,7 +288,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void setMapListener() {
-
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -311,10 +299,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
         mMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
-            public void onCameraIdle()
-            {
-                if(!isTerminalSelected)
-                {
+            public void onCameraIdle() {
+                if (!isTerminalSelected) {
                     electricalTerminalMarker.deleteAllTerminalMarker(markersTerminal);
                     initiateSetTerminalNodes();
                     if (markersInterest.size() > 0) {
@@ -331,7 +317,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         favoriteButton.setChecked(false);
     }
 
-    private void moveCamera(LatLng newPosition){
+    private void moveCamera(LatLng newPosition) {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newPosition, INITIAL_ZOOM));
     }
 
@@ -340,8 +326,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onParseElectricalTerminalComplete()
-    {
+    public void onParseElectricalTerminalComplete() {
         initiateSetTerminalNodes();
     }
 
@@ -355,15 +340,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (favoriteButton.isChecked()) {
             terminalName = markersTerminal.get(indexSelectedTerminal).getTitle();
             createFavoriteMarker(terminalName);
-        }
-        else {
+        } else {
             terminalName = markersFavorite.get(indexSelectedTerminal).getTitle();
             removeFavoriteMarker(terminalName);
         }
     }
 
     private void removeFavoriteMarker(String terminalName) {
-
         LatLng electricalTerminalPosition = markersFavorite.get(indexSelectedTerminal).getPosition();
 
         favoriteTerminalRepository.create(new ElectricalTerminal(terminalName, electricalTerminalPosition.latitude,
@@ -405,14 +388,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (isElectricalTerminalClicked(marker))
             return true;
         else
-            return  (isFavoriteTerminalClicked(marker));
+            return (isFavoriteTerminalClicked(marker));
     }
 
     private boolean isFavoriteTerminalClicked(Marker marker) {
-        for (int i = 0; i < markersFavorite.size(); i++)
-        {
-            if (marker.equals(markersFavorite.get(i)))
-            {
+        for (int i = 0; i < markersFavorite.size(); i++) {
+            if (marker.equals(markersFavorite.get(i))) {
                 favoriteButton.setEnabled(true);
                 favoriteButton.setChecked(true);
                 isTerminalSelected = true;
@@ -426,10 +407,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private boolean isElectricalTerminalClicked(Marker marker) {
-        for (int i = 0; i < markersTerminal.size(); i++)
-        {
-            if (marker.equals(markersTerminal.get(i)))
-            {
+        for (int i = 0; i < markersTerminal.size(); i++) {
+            if (marker.equals(markersTerminal.get(i))) {
                 favoriteButton.setEnabled(true);
                 favoriteButton.setChecked(false);
                 isTerminalSelected = true;
