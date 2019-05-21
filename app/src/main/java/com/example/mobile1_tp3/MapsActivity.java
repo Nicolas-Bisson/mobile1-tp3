@@ -71,6 +71,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     //widgets
     private EditText searchText;
     private List<ElectricalTerminal> listCurrentTerminals;
+    private List<ElectricalTerminal> listFavoriteTerminals;
     private ArrayList<Marker> markersTerminal;
     private ArrayList<Marker> markersInterest;
     private ArrayList<Marker> markersFavorite;
@@ -279,9 +280,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                isTerminalSelected = false;
-                favoriteButton.setEnabled(false);
-                favoriteButton.setChecked(false);
+                disableMarkerSelection();
 
                 pointOfInterestMarker.setPointInterestMarkerInvisible(markersInterest);
             }
@@ -300,6 +299,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
             }
         });
+    }
+
+    private void disableMarkerSelection() {
+        isTerminalSelected = false;
+        favoriteButton.setEnabled(false);
+        favoriteButton.setChecked(false);
     }
 
     private void moveCamera(LatLng newPosition){
@@ -322,11 +327,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     public void onFavoriteButtonClick(View view) {
-        String terminalName = markersTerminal.get(indexSelectedTerminal).getTitle();
+        String terminalName;
         if (favoriteButton.isChecked()) {
+            terminalName = markersTerminal.get(indexSelectedTerminal).getTitle();
             createFavoriteMarker(terminalName);
         }
         else {
+            terminalName = markersFavorite.get(indexSelectedTerminal).getTitle();
             removeFavoriteMarker(terminalName);
         }
     }
@@ -339,35 +346,44 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 electricalTerminalPosition.longitude));
 
         CreateMarkerTerminal(electricalTerminalPosition, terminalName);
-        markersFavorite.get(indexSelectedTerminal).remove();
-        favoriteTerminalRepository.delete(terminalName);
 
-        onMarkerClick(markersTerminal.get(markersTerminal.size()-1));
+        markersFavorite.get(indexSelectedTerminal).remove();
+        favoriteTerminalRepository.delete(listFavoriteTerminals.get(indexSelectedTerminal).getId());
+        listFavoriteTerminals.remove(indexSelectedTerminal);
+
+        disableMarkerSelection();
     }
 
     private void createFavoriteMarker(String terminalName) {
         LatLng favoriteTerminalPosition = markersTerminal.get(indexSelectedTerminal).getPosition();
 
-        favoriteTerminalRepository.create(new ElectricalTerminal("Favorite", favoriteTerminalPosition.latitude,
+        favoriteTerminalRepository.create(new ElectricalTerminal(terminalName, favoriteTerminalPosition.latitude,
                 favoriteTerminalPosition.longitude));
+
+        addFavoriteMarkerToMap(terminalName, favoriteTerminalPosition);
+
+        markersTerminal.get(indexSelectedTerminal).remove();
+        terminalRepository.delete(listCurrentTerminals.get(indexSelectedTerminal).getId());
+        listCurrentTerminals.remove(indexSelectedTerminal);
+
+        disableMarkerSelection();
+    }
+
+    private void addFavoriteMarkerToMap(String terminalName, LatLng favoriteTerminalPosition) {
         markersFavorite.add(mMap.addMarker(new MarkerOptions()
                 .position(favoriteTerminalPosition)
                 .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_favorite_terminal))
                 .title(terminalName)));
-
-        markersTerminal.get(indexSelectedTerminal).remove();
-        terminalRepository.delete(listCurrentTerminals.get(indexSelectedTerminal).getId());
-        onMarkerClick(markersFavorite.get(markersFavorite.size()-1));
     }
 
     public boolean onMarkerClick(final Marker marker) {
 
-        if (electricalTerminalIsClicked(marker)) return true;
-        else if (favoriteTerminalIsClicked(marker)) return true;
+        if (isElectricalTerminalClicked(marker)) return true;
+        else if (isFavoriteTerminalClicked(marker)) return true;
         else return false;
     }
 
-    private boolean favoriteTerminalIsClicked(Marker marker) {
+    private boolean isFavoriteTerminalClicked(Marker marker) {
         for (int i = 0; i < markersFavorite.size(); i++)
         {
             if (marker.equals(markersFavorite.get(i)))
@@ -384,12 +400,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return false;
     }
 
-    private boolean electricalTerminalIsClicked(Marker marker) {
+    private boolean isElectricalTerminalClicked(Marker marker) {
         for (int i = 0; i < markersTerminal.size(); i++)
         {
             if (marker.equals(markersTerminal.get(i)))
             {
                 favoriteButton.setEnabled(true);
+                favoriteButton.setChecked(false);
                 isTerminalSelected = true;
                 indexSelectedTerminal = i;
 
@@ -404,6 +421,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onGetTerminalToShowFromRepositoryComplete(List<ElectricalTerminal> electricalTerminals) {
         listCurrentTerminals = electricalTerminals;
         electricalTerminalMarker.setElectricalTerminalNodes(electricalTerminals, this);
+        listFavoriteTerminals = favoriteTerminalRepository.readAll();
+        for (int i = 0; i < listFavoriteTerminals.size(); i++) {
+            addFavoriteMarkerToMap(listFavoriteTerminals.get(i).getName(),
+                    new LatLng(listFavoriteTerminals.get(i).getLatitude(), listFavoriteTerminals.get(i).getLongitude()));
+        }
     }
 
     public void CreateMarkerTerminal(LatLng markerPosition, String title) {

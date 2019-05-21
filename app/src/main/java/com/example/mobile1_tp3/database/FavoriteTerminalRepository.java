@@ -134,14 +134,18 @@ public class FavoriteTerminalRepository implements MarkerRepository<ElectricalTe
         }
     }
 
-    @Override
-    public void delete(String name) {
-        try (Cursor cursor = database.rawQuery(FavoriteTerminalTable.DELETE, new String[]{name})) {
+    public void delete(Long id) {
+        try (Cursor cursor = database.rawQuery(FavoriteTerminalTable.DELETE, new String[]{String.valueOf(id)})) {
             cursor.moveToNext(); //Delete from database.
 
             database.setTransactionSuccessful();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void delete(String name) {
+
     }
 }
