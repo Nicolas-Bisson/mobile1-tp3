@@ -134,7 +134,7 @@ public class FavoriteTerminalRepository implements MarkerRepository<ElectricalTe
         }
     }
 
-    public void delete(Long id) {
+    public void delete(long id) {
         try (Cursor cursor = database.rawQuery(FavoriteTerminalTable.DELETE, new String[]{String.valueOf(id)})) {
             cursor.moveToNext(); //Delete from database.
 
@@ -142,10 +142,5 @@ public class FavoriteTerminalRepository implements MarkerRepository<ElectricalTe
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void delete(String name) {
-
     }
 }

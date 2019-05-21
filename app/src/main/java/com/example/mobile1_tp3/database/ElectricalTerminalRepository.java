@@ -143,9 +143,4 @@ public class ElectricalTerminalRepository implements MarkerRepository<Electrical
             e.printStackTrace();
         }
     }
-
-    @Override
-    public void delete(String name) {
-
-    }
 }

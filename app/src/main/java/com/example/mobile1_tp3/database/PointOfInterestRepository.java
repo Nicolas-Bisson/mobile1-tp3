@@ -136,8 +136,8 @@ public class PointOfInterestRepository implements MarkerRepository<PointOfIntere
     }
 
     @Override
-    public void delete(String name) {
-        try (Cursor cursor = database.rawQuery(PointOfInterestTable.DELETE, new String[]{name})) {
+    public void delete(long id) {
+        try (Cursor cursor = database.rawQuery(PointOfInterestTable.DELETE, new String[]{String.valueOf(id)})) {
             cursor.moveToNext(); //Delete from database.
 
             database.setTransactionSuccessful();
