@@ -83,6 +83,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private View rootView;
     private ToggleButton favoriteButton;
 
+    private  boolean permissionGranted;
+
     LatLng cameraPositionBeforeRot;
 
     @Override
@@ -149,6 +151,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         cameraPositionBeforeRot = new LatLng(0, 0);
 
+        permissionGranted = false;
+
         providerClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
@@ -169,7 +173,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void askForDeviceLocationPermission() {
-        if (!checkDeviceLocationPermission()) {
+        if (!checkDeviceLocationPermission() && !permissionGranted) {
 
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) &&
                     ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
@@ -181,7 +185,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                         LOCATION_PERMISSION_REQUEST);
             }
         }
-        Snackbar.make(rootView, getString(R.string.accepted_location_permission_message), Snackbar.LENGTH_LONG).show();
     }
 
     @Override
@@ -190,7 +193,9 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             case LOCATION_PERMISSION_REQUEST: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Snackbar.make(rootView, getString(R.string.accepted_location_permission_message), Snackbar.LENGTH_LONG).show();
+                    permissionGranted = true;
                 } else {
+                    permissionGranted = false;
                     Snackbar.make(rootView, getString(R.string.refused_location_permission_message), Snackbar.LENGTH_LONG).show();
                 }
             }
