@@ -59,7 +59,7 @@ public class PointOfInterestRepository implements MarkerRepository<PointOfIntere
     public PointOfInterest readById(long id) {
         PointOfInterest pointOfInterest = null;
 
-        try(Cursor cursor = database.rawQuery(PointOfInterestTable.SELECT_BY_ID, new String[]{String.valueOf(id)})) {
+        try (Cursor cursor = database.rawQuery(PointOfInterestTable.SELECT_BY_ID, new String[]{String.valueOf(id)})) {
             if (cursor.moveToNext()) {
                 String name = cursor.getString(0);
                 Double latitude = cursor.getDouble(1);
@@ -78,7 +78,7 @@ public class PointOfInterestRepository implements MarkerRepository<PointOfIntere
     public List<PointOfInterest> readAll() {
         List<PointOfInterest> pointOfInterests = new ArrayList<>();
 
-        try(Cursor cursor = database.rawQuery(PointOfInterestTable.SELECT_ALL, new String[]{})) {
+        try (Cursor cursor = database.rawQuery(PointOfInterestTable.SELECT_ALL, new String[]{})) {
             while (cursor.moveToNext()) {
                 Long id = cursor.getLong(0);
                 String name = cursor.getString(1);
@@ -98,7 +98,7 @@ public class PointOfInterestRepository implements MarkerRepository<PointOfIntere
     public List<PointOfInterest> readByPosition(LatLng currentPosition) {
         List<PointOfInterest> pointOfInterests = new ArrayList<>();
 
-        try(Cursor cursor = database.rawQuery(PointOfInterestTable.SELECT_BY_POSITION, new String[]{
+        try (Cursor cursor = database.rawQuery(PointOfInterestTable.SELECT_BY_POSITION, new String[]{
                 String.valueOf(currentPosition.latitude - DETECTION_RANGE),
                 String.valueOf(currentPosition.latitude + DETECTION_RANGE),
                 String.valueOf(currentPosition.longitude - DETECTION_RANGE),

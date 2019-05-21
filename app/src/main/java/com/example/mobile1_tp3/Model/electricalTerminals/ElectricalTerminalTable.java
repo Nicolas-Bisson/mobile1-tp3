@@ -36,7 +36,7 @@ public class ElectricalTerminalTable {
             "FROM electricalTerminals\n" +
             "WHERE (latitude BETWEEN ? AND ?) AND (longitude BETWEEN ? AND ?);";
 
-    public static final  String UPDATE = "" +
+    public static final String UPDATE = "" +
             "UPDATE electricalTerminals\n" +
             "SET \n" +
             "    name = ?,\n" +

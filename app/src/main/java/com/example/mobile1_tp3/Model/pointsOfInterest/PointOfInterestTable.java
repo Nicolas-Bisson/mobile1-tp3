@@ -35,7 +35,7 @@ public class PointOfInterestTable {
             "FROM pointsOfInterest\n" +
             "WHERE (latitude BETWEEN ? AND ?) AND (longitude BETWEEN ? AND ?);";
 
-    public static final  String UPDATE = "" +
+    public static final String UPDATE = "" +
             "UPDATE pointsOfInterest\n" +
             "SET \n" +
             "    name = ?,\n" +

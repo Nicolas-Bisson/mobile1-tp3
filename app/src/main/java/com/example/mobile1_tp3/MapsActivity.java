@@ -152,15 +152,6 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         providerClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
-    private void setInitialFavoriteMarker() {
-        listFavoriteTerminals = favoriteTerminalRepository.readAll();
-        for (int i = 0; i < listFavoriteTerminals.size(); i++) {
-            addFavoriteMarkerToMap(listFavoriteTerminals.get(i).getName(),
-                    new LatLng(listFavoriteTerminals.get(i).getLatitude(), listFavoriteTerminals.get(i).getLongitude()));
-        }
-        electricalTerminalMarker = new ElectricalTerminalMarker();
-    }
-
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -300,6 +291,15 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         setInitialFavoriteMarker();
     }
 
+    private void setInitialFavoriteMarker() {
+        listFavoriteTerminals = favoriteTerminalRepository.readAll();
+        for (int i = 0; i < listFavoriteTerminals.size(); i++) {
+            addFavoriteMarkerToMap(listFavoriteTerminals.get(i).getName(),
+                    new LatLng(listFavoriteTerminals.get(i).getLatitude(), listFavoriteTerminals.get(i).getLongitude()));
+        }
+        electricalTerminalMarker = new ElectricalTerminalMarker();
+    }
+
     private void setMapListener() {
         mMap.setOnMarkerClickListener(this);
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -378,7 +378,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         terminalRepository.delete(listCurrentTerminals.get(indexSelectedTerminal).getId());
         listCurrentTerminals.remove(indexSelectedTerminal);
 
-        onMarkerClick(markersFavorite.get(markersFavorite.size()-1));
+        onMarkerClick(markersFavorite.get(markersFavorite.size() - 1));
     }
 
     private void removeFavoriteMarker(String terminalName) {
@@ -396,7 +396,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         favoriteTerminalRepository.delete(listFavoriteTerminals.get(indexSelectedTerminal).getId());
         listFavoriteTerminals.remove(indexSelectedTerminal);
 
-        onMarkerClick(markersTerminal.get(markersTerminal.size()-1));
+        onMarkerClick(markersTerminal.get(markersTerminal.size() - 1));
     }
 
     private void addFavoriteMarkerToMap(String terminalName, LatLng favoriteTerminalPosition) {
@@ -415,10 +415,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private boolean isFavoriteTerminalClicked(Marker marker) {
-        for (int i = 0; i < markersFavorite.size(); i++)
-        {
-            if (marker.equals(markersFavorite.get(i)))
-            {
+        for (int i = 0; i < markersFavorite.size(); i++) {
+            if (marker.equals(markersFavorite.get(i))) {
                 return onTerminalClickedOperation(i, true);
             }
         }
@@ -426,10 +424,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private boolean isElectricalTerminalClicked(Marker marker) {
-        for (int i = 0; i < markersTerminal.size(); i++)
-        {
-            if (marker.equals(markersTerminal.get(i)))
-            {
+        for (int i = 0; i < markersTerminal.size(); i++) {
+            if (marker.equals(markersTerminal.get(i))) {
                 return onTerminalClickedOperation(i, false);
             }
         }

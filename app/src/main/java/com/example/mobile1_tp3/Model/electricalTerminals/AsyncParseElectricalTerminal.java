@@ -6,15 +6,12 @@ import com.example.mobile1_tp3.database.ElectricalTerminalRepository;
 
 import java.io.InputStream;
 
-public class AsyncParseElectricalTerminal extends AsyncTask<InputStream, Void, Void>
-{
+public class AsyncParseElectricalTerminal extends AsyncTask<InputStream, Void, Void> {
     private final Listener listener;
     ElectricalTerminalRepository terminalRepository;
 
-    public AsyncParseElectricalTerminal(Listener listener, ElectricalTerminalRepository terminalRepository)
-    {
-        if(listener == null)
-        {
+    public AsyncParseElectricalTerminal(Listener listener, ElectricalTerminalRepository terminalRepository) {
+        if (listener == null) {
             throw new IllegalArgumentException("listener doesn't exist");
         }
         this.listener = listener;
@@ -22,15 +19,13 @@ public class AsyncParseElectricalTerminal extends AsyncTask<InputStream, Void, V
     }
 
     @Override
-    protected Void doInBackground(InputStream... inputStreams)
-    {
+    protected Void doInBackground(InputStream... inputStreams) {
         ParseElectricalTerminal.Instance.Parse(inputStreams[0], terminalRepository);
         return null;
     }
 
     @Override
-    protected void onPostExecute(Void aVoid)
-    {
+    protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         listener.onParseElectricalTerminalComplete();
     }

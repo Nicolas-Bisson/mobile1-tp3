@@ -58,7 +58,7 @@ public class ElectricalTerminalRepository implements MarkerRepository<Electrical
     public ElectricalTerminal readById(long id) {
         ElectricalTerminal electricalTerminal = null;
 
-        try(Cursor cursor = database.rawQuery(ElectricalTerminalTable.SELECT_BY_ID, new String[]{String.valueOf(id)})) {
+        try (Cursor cursor = database.rawQuery(ElectricalTerminalTable.SELECT_BY_ID, new String[]{String.valueOf(id)})) {
             if (cursor.moveToNext()) {
                 String name = cursor.getString(0);
                 Double latitude = cursor.getDouble(1);
@@ -77,7 +77,7 @@ public class ElectricalTerminalRepository implements MarkerRepository<Electrical
     public List<ElectricalTerminal> readAll() {
         List<ElectricalTerminal> electricalTerminals = new ArrayList<>();
 
-        try(Cursor cursor = database.rawQuery(ElectricalTerminalTable.SELECT_ALL, new String[]{})) {
+        try (Cursor cursor = database.rawQuery(ElectricalTerminalTable.SELECT_ALL, new String[]{})) {
             while (cursor.moveToNext()) {
                 Long id = cursor.getLong(0);
                 String name = cursor.getString(1);
@@ -97,7 +97,7 @@ public class ElectricalTerminalRepository implements MarkerRepository<Electrical
     public List<ElectricalTerminal> readByPosition(LatLng currentPosition) {
         List<ElectricalTerminal> electricalTerminals = new ArrayList<>();
 
-        try(Cursor cursor = database.rawQuery(ElectricalTerminalTable.SELECT_BY_POSITION, new String[]{
+        try (Cursor cursor = database.rawQuery(ElectricalTerminalTable.SELECT_BY_POSITION, new String[]{
                 String.valueOf(currentPosition.latitude - DETECTION_RANGE),
                 String.valueOf(currentPosition.latitude + DETECTION_RANGE),
                 String.valueOf(currentPosition.longitude - DETECTION_RANGE),
