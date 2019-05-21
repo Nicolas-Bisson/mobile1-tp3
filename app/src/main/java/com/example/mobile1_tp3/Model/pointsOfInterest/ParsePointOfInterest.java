@@ -87,14 +87,7 @@ public enum ParsePointOfInterest {
 
                 if (pointOfInterests.containsKey(info[ID_ROW])) {
                     if (info.length >= 15) {
-                        try {
-                            pointOfInterestRepository.create(new PointOfInterest(
-                                    pointOfInterests.get(info[ID_ROW]).getName(),
-                                    Double.parseDouble(info[LATITUDE_ROW]),
-                                    Double.parseDouble(info[LONGITUDE_ROW])));
-                        } catch (NumberFormatException ex) {
-                            ex.printStackTrace();
-                        }
+                        addPointOfInterestToDatabase(info);
                     }
                 }
                 line = bufferedReader.readLine();
@@ -109,6 +102,17 @@ public enum ParsePointOfInterest {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private void addPointOfInterestToDatabase(String[] info) {
+        try {
+            pointOfInterestRepository.create(new PointOfInterest(
+                    pointOfInterests.get(info[ID_ROW]).getName(),
+                    Double.parseDouble(info[LATITUDE_ROW]),
+                    Double.parseDouble(info[LONGITUDE_ROW])));
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
         }
     }
 }

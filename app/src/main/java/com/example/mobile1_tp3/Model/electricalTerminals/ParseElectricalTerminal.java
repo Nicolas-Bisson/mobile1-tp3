@@ -46,12 +46,9 @@ public enum ParseElectricalTerminal {
                     line = line.replace("=" + countForReplacements, subString.get(countForReplacements));
                     countForReplacements++;
                 }
+
                 String[] info = line.split("/");
-                try {
-                    terminalRepository.create(new ElectricalTerminal(info[NAME_ROW], Double.parseDouble(info[LATITUDE_ROW]), Double.parseDouble(info[LONGITUDE_ROW])));
-                } catch (NumberFormatException ex) {
-                    ex.printStackTrace();
-                }
+                addTerminalToDatabase(terminalRepository, info);
                 line = bufferedReader.readLine();
             }
 
@@ -60,6 +57,14 @@ public enum ParseElectricalTerminal {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private void addTerminalToDatabase(ElectricalTerminalRepository terminalRepository, String[] info) {
+        try {
+            terminalRepository.create(new ElectricalTerminal(info[NAME_ROW], Double.parseDouble(info[LATITUDE_ROW]), Double.parseDouble(info[LONGITUDE_ROW])));
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
         }
     }
 }
