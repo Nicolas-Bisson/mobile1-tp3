@@ -365,9 +365,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void removeFavoriteMarker(String terminalName) {
 
         LatLng electricalTerminalPosition = markersFavorite.get(indexSelectedTerminal).getPosition();
+        ElectricalTerminal newElectricalTerminal = new ElectricalTerminal(terminalName,
+                electricalTerminalPosition.latitude, electricalTerminalPosition.longitude);
 
-        favoriteTerminalRepository.create(new ElectricalTerminal(terminalName, electricalTerminalPosition.latitude,
-                electricalTerminalPosition.longitude));
+        favoriteTerminalRepository.create(newElectricalTerminal);
+        listCurrentTerminals.add(newElectricalTerminal);
 
         CreateMarkerTerminal(electricalTerminalPosition, terminalName);
 
@@ -380,9 +382,11 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void createFavoriteMarker(String terminalName) {
         LatLng favoriteTerminalPosition = markersTerminal.get(indexSelectedTerminal).getPosition();
+        ElectricalTerminal newFavoriteTerminal = new ElectricalTerminal(terminalName,
+                favoriteTerminalPosition.latitude, favoriteTerminalPosition.longitude);
 
-        favoriteTerminalRepository.create(new ElectricalTerminal(terminalName, favoriteTerminalPosition.latitude,
-                favoriteTerminalPosition.longitude));
+        favoriteTerminalRepository.create(newFavoriteTerminal);
+        listFavoriteTerminals.add(newFavoriteTerminal);
 
         addFavoriteMarkerToMap(terminalName, favoriteTerminalPosition);
 
