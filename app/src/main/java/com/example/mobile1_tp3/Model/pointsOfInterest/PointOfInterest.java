@@ -1,5 +1,7 @@
 package com.example.mobile1_tp3.Model.pointsOfInterest;
 
+//BEN_CORRECTION : Aucune doc.
+
 public class PointOfInterest {
     private Long id;
     private String name;

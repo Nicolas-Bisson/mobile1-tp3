@@ -10,6 +10,20 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;
 
+//BEN_CORRECTION : Aucune doc.
+
+//BEN_CORRECTION : Intrusion de la "View" et du "Controleur" dans le modèle.
+//                 Je suis pas certain que vous avez bien réfléchi avant de faire cette classe.
+//
+//                 De 1, cette classe ne représente rien du tout. Elle n'a aucune donnée : elle contient
+//                 des fonctions, et c'est tout.
+//
+//                 De 2, elle semble gérer des listes de "Marker", mais son nom est au singulier. C'est assez mélangeant...
+//
+//                 Bref, il y a du travail à faire.
+//
+//                 Le constat est le même dans "ElectricalTerminalMarker".
+
 public class PointOfInterestMarker {
 
 

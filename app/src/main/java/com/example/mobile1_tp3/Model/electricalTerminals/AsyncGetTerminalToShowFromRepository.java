@@ -7,6 +7,8 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
+//BEN_REVIEW : Le "FromRepository" est pas utile.
+//BEN_REVIEW : "GetTerminalToShow" ? Pas clair.
 public class AsyncGetTerminalToShowFromRepository extends AsyncTask<ElectricalTerminalRepository, Void, List<ElectricalTerminal>> {
 
     private final Listener listener;

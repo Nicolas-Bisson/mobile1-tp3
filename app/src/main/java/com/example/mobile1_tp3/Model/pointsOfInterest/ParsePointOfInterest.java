@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
+//BEN_CORRECTION : Aucune doc.
+
 public enum ParsePointOfInterest {
     Instance;
 

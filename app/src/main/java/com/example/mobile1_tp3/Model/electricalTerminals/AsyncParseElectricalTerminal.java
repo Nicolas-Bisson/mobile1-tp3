@@ -8,6 +8,7 @@ import java.io.InputStream;
 
 public class AsyncParseElectricalTerminal extends AsyncTask<InputStream, Void, Void> {
     private final Listener listener;
+    //BEN_CORRECTION : Private manquant.
     ElectricalTerminalRepository terminalRepository;
 
     public AsyncParseElectricalTerminal(Listener listener, ElectricalTerminalRepository terminalRepository) {

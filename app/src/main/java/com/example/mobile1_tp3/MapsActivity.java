@@ -53,9 +53,18 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, AsyncParseElectricalTerminal.Listener,
-        AsyncParsePointOfInterest.Listener, AsyncGetTerminalToShowFromRepository.Listener, GoogleMap.OnMarkerClickListener {
+//BEN_REVIEW : Quand on a plusieurs "implements" comme ceci, je vous suggère de le formatter ainsi :
 
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback,
+                                                               AsyncParseElectricalTerminal.Listener,
+                                                               AsyncParsePointOfInterest.Listener,
+                                                               AsyncGetTerminalToShowFromRepository.Listener,
+                                                               GoogleMap.OnMarkerClickListener {
+//             Voici à quoi cela ressemblait avant :
+//public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, AsyncParseElectricalTerminal.Listener,
+//        AsyncParsePointOfInterest.Listener, AsyncGetTerminalToShowFromRepository.Listener, GoogleMap.OnMarkerClickListener {
+
+    //BEN_REVIEW : Avoir à le refaire, je placerais ces constantes dans un fichier de configuration.
     private static final int INITIAL_ZOOM = 12;
     private static final LatLng QUEBEC_POSITION = new LatLng(46.829853, -71.254028);
     private static final int LOCATION_PERMISSION_REQUEST = 1;
@@ -64,6 +73,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private PointOfInterestRepository pointOfInterestRepository;
     private FavoriteTerminalRepository favoriteTerminalRepository;
     private FusedLocationProviderClient providerClient;
+    //BEN_CORRECTION : Tout à coup, un tout autre standard de nommage...Copier-Coller de code ?
     private GoogleMap mMap;
     private boolean isTerminalSelected;
     private int indexSelectedTerminal;
@@ -75,15 +85,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<Marker> markersTerminal;
     private ArrayList<Marker> markersInterest;
     private ArrayList<Marker> markersFavorite;
+    //BEN_CORRECTION : Private manquant.
     ElectricalTerminalMarker electricalTerminalMarker;
+    //BEN_CORRECTION : Private manquant.
     PointOfInterestMarker pointOfInterestMarker;
     private ProgressBar progressBar;
     private DrawerLayout drawerLayout;
     private View rootView;
     private ToggleButton favoriteButton;
 
+    //BEN_REVIEW : Espace de trop entre "private" et "boolean".
     private  boolean permissionGranted;
 
+    //BEN_CORRECTION : Private manquant.
     LatLng cameraPositionBeforeRot;
 
     @Override
@@ -116,7 +130,12 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         pointOfInterestRepository = new PointOfInterestRepository(connectionFactory.getWritableDatabase());
         favoriteTerminalRepository = new FavoriteTerminalRepository(connectionFactory.getWritableDatabase());
 
+        //BEN_CORRECTION : S'il y a une erreur là, c'est nécessairement une erreur de programation.
+        //                 Le try/catch a donc pas d'affaire là. De toute façon, vous ne faites
+        //                 rien avec cette erreur. Logique fautive.
         try {
+            //BEN_CORRECTION : Un "count" aurait été 3 000 000 de fois plus rapide.
+            //                 De plus, cela aurait du être fait en tâche de fond.
             if (terminalRepository.readAll().size() == 0) {
                 final InputStream FILE_ELECTRICAL_TERMINAL = this.getResources().openRawResource(R.raw.bornes);
                 AsyncParseElectricalTerminal asyncParserElectricalTerminal = new AsyncParseElectricalTerminal(this, terminalRepository);
@@ -158,6 +177,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        //BEN_CORRECTION : Constantes.
         outState.putString("latBeforeRot", String.valueOf(getCurrentPosition().latitude));
         outState.putString("longBeforeRot", String.valueOf(getCurrentPosition().longitude));
     }
@@ -166,12 +186,19 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
+        //BEN_CORRECTION : Constantes.
+        //BEN_CORRECTION : Warnings importants ignorés.
+        //BEN_CORRECTION : Le zoom est pas conservé.
+        //                 Voir "mMap.getCameraPosition().zoom".
         double latBeforeRot = Double.valueOf(savedInstanceState.getString("latBeforeRot"));
         double longBeforeRot = Double.valueOf(savedInstanceState.getString("longBeforeRot"));
         cameraPositionBeforeRot = new LatLng(latBeforeRot, longBeforeRot);
     }
 
     private void askForDeviceLocationPermission() {
+        //BEN_CORRECTION : La seconde partie de cette condition (après le &&) est redondante.
+        //                 Si la première est vrai, la second l'est aussi et vice versa.
+        //                 Erreur de logique.
         if (!checkDeviceLocationPermission() && !permissionGranted) {
 
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) &&
@@ -195,6 +222,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                     permissionGranted = true;
                 } else {
                     permissionGranted = false;
+                    //BEN_REVIEW : Hey! Vous venez de mentir à votre usager !!!
+                    //             Voir la fonction "moveCameraToDevicePosition".
+                    //
+                    //             J'ai vraiment failli vous enlever des points pour ça.
                     Snackbar.make(rootView, getString(R.string.refused_location_permission_message), Snackbar.LENGTH_LONG).show();
                 }
             }
@@ -223,6 +254,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             moveCamera(QUEBEC_POSITION);
     }
 
+    //BEN_REVIEW : Les méthodes répondant à des questions booléennes débutent généralement par "has"
+    //             ou "is". Il est très rare de voir "check". À faire attention.
     private boolean checkDeviceLocationPermission() {
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -241,6 +274,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         return super.onOptionsItemSelected(item);
     }
 
+    //BEN_CORRECTION : Pourquoi vous ne faites pas cela au "onCreate" ? J'ai vraiment l'impression
+    //                 que vous avez fait cela pour éviter un "null ptr exception". Logique patchée.
     private void setListenerOnCitySearch() {
         searchText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -260,12 +295,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         Geocoder geocoder = new Geocoder(MapsActivity.this);
         List<Address> list = new ArrayList<>();
 
+        //BEN_CORRECTION : Ceci devrait être fait en tâche de fond. La doc dit que cette fonction
+        //                 est bloquante, car elle fait un appel réseau pour obtenir le nom de la
+        //                 ville.
         try {
             list = geocoder.getFromLocationName(searchString, 1);
         } catch (IOException e) {
+            //BEN_CORRECTION ; Erreur ignorée. La doc dit que "getFromLocationName" peut effectivement
+            //                 lancer une exception si elle na pas accès à internet.
             e.printStackTrace();
         }
 
+        //BEN_CORRECTION : Et si la ville demandée n'existe pas ? Actuellement, vous ne faites rien.
         if (list.size() > 0) {
             Address addressSearched = list.get(0);
             moveCamera(new LatLng(addressSearched.getLatitude(), addressSearched.getLongitude()));
@@ -280,6 +321,7 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        //BEN_REVIEW : Aurait pu être demandé dès "onStart".
         askForDeviceLocationPermission();
         //Check if onMapReady call due to device rotation
         if (cameraPositionBeforeRot.latitude == 0 && cameraPositionBeforeRot.longitude == 0)
@@ -461,6 +503,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .title(title)));
     }
 
+    //BEN_CORRECTION : Ça m'a pris un bon momment pour comprendre ce que cela faisait.
+    //                 Cela recherche les terminaux les plus proches de la position actuelle n'est-ce pas ?
+    //
+    //                 Alors pourquoi est-ce que le nom de cette fonction ne le dit pas ?
     public void initiateSetTerminalNodes() {
         AsyncGetTerminalToShowFromRepository task = new AsyncGetTerminalToShowFromRepository(this, getCurrentPosition());
         task.execute(terminalRepository);

@@ -6,6 +6,8 @@ import com.google.android.gms.maps.model.Marker;
 
 import java.util.List;
 
+//BEN_CORRECTION : Aucune doc.
+
 public class ElectricalTerminalMarker {
 
 
@@ -24,6 +26,7 @@ public class ElectricalTerminalMarker {
 
                 activity.CreateMarkerTerminal(electricalTerminalPosition, electricalTerminals.get(i).getName());
             } catch (NumberFormatException e) {
+                //BEN_CORRECTION : Ce try/catch n'a pas d'affaire là. Cela cache une erreur.
                 e.printStackTrace();
             }
         }

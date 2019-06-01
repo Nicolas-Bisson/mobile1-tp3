@@ -1,5 +1,7 @@
 package com.example.mobile1_tp3.Model.electricalTerminals;
 
+//BEN_CORRECTION : Aucune doc.
+
 public class ElectricalTerminal {
     private Long id;
     private String name;

@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+//BEN_CORRECTION : Aucune doc.
+
 public enum ParseElectricalTerminal {
     Instance;
 
@@ -15,6 +17,7 @@ public enum ParseElectricalTerminal {
     public static final int LONGITUDE_ROW = 5;
     public static final String CHARSET_NAME = "ISO-8859-1";
 
+    //BEN_CORRECTION : Tout à coup, standard C# de nommage des fonctions.
     public void Parse(InputStream inputStream, ElectricalTerminalRepository terminalRepository) {
         loadElectricalTerminalCSV(inputStream, terminalRepository);
         System.out.println("");
@@ -61,6 +64,9 @@ public enum ParseElectricalTerminal {
     }
 
     private void addTerminalToDatabase(ElectricalTerminalRepository terminalRepository, String[] info) {
+        //BEN_CORRECTION : Try/Catch devrait être enlevé. Vous cachez potentiellement une erreur qui aurait
+        //                 du être gérée. Je ne dis pas d'afficher un message à l'utilisateur, car si une exception
+        //                 est lancée ici, c'est une erreur de programmation que vous avez.
         try {
             terminalRepository.create(new ElectricalTerminal(info[NAME_ROW], Double.parseDouble(info[LATITUDE_ROW]), Double.parseDouble(info[LONGITUDE_ROW])));
         } catch (NumberFormatException ex) {
